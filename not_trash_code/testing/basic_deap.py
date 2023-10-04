@@ -1,16 +1,17 @@
 from deap import base
 from deap import tools
 from deap import creator
-
+import random
+import fitness_evaluation
 toolbox = base.Toolbox()
 
 def train():
 	IND_SIZE = 4 # size of individuals (size of genome)
-	NGEN = 10 # number of generations. Move to config-file later
+	NGEN = 100 # number of generations. Move to config-file later
 	POP_SIZE = 50
 	CXPB = 0.1
 	MUTPB = 0.1
-	creator.create('FitnessMin', base.Fitness, weights=(-1.0,))
+	creator.create('FitnessMin', base.Fitness, weights=(1.0,))
 	# this means creating a new base class Individual that ...
 	# ... behave like a python list (inherits from list) 
 	creator.create('Individual', list, fitness=creator.FitnessMin)
@@ -20,7 +21,7 @@ def train():
 	toolbox.register('attr_float', random.random)
 	toolbox.register('individual', tools.initRepeat, creator.Individual,
                  toolbox.attr_float, n=IND_SIZE)
-
+	
 
 	toolbox.register('mate', tools.cxTwoPoint)
 	toolbox.register('mutate', tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
@@ -57,3 +58,7 @@ def train():
 
 	    # The population is entirely replaced by the offspring
 	    population[:] = offspring
+	print(population)
+
+
+train()
