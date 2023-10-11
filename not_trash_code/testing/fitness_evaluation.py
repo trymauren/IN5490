@@ -1,16 +1,6 @@
+import unity_interface 
 import numpy as np
 
-def evaluate_population(population, test_mode = False) -> None:
-	if not test_mode:
-		for individual in population:
-			individual.fitness.values = evaluate_individual(individual)
-	else:
-		fitnesses = [0]*len(population)
-		for i in range(len(population)):
-			fitnesses[i] = evaluate_individual(population[i])
-		return fitnesses
-
-def evaluate_individual(individual) -> tuple:
 	"""
 	Evaluates the fitness of an individuals genes. Used by DEAP.
 		Arg: individual
@@ -18,6 +8,16 @@ def evaluate_individual(individual) -> tuple:
 	movement = compute_movement(individual)
 	# fitness = send_actions_to_unity(movement)
 	fitness = movement
+	#print(individual)
+	movement = compute_movement(individual)
+	print("------------fitness---------------")
+	#env = unity_interface.start_env(executable_file="C:/Users/oyo12/3D Objects/exe_filer/UnityEnvironment.exe")
+	coordinates = unity_interface.send_actions_to_unity(env, [movement])
+	#print(coordinates[0])
+	fitness = np.sqrt(coordinates[0][1][0][2]**2+coordinates[0][1][0][0]**2)
+	print(fitness)
+	
+
 	return (fitness,) # must return tuple!
 
 def compute_movement(individual) -> np.array(np.array):
@@ -39,11 +39,15 @@ def compute_sin(A=1, f=2, phase=0) -> np.array:
 		Arg: A: amplitude, f: frequency, phase: -.-
 	"""
 	t = np.array([0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1], dtype=float)
-	sinusoid = (np.sin(t * f + phase)+A)/(2*A)
+	sinusoid = (A*np.sin(t * f + phase))/(A)
 	return sinusoid
 
 
-mat =  [1,1,0.25, 1,1,0.25, 1,1,0.25, 1,1,0.25,
-		1,1,0.5, 1,1,0.5, 1,1,0.5, 1,1,0.5,
-		2,1,0.5, 2,1,0.5, 2,1,0.5, 2,1,0.5]
-print(evaluate_population([mat,mat], test_mode=True))
+##mat =  [1,1,0.25, 1,1,0.25, 1,1,0.25, 1,1,0.25,
+## 		1,1,0.5, 1,1,0.5, 1,1,0.5, 1,1,0.5,
+## 		2,1,0.5, 2,1,0.5, 2,1,0.5, 2,1,0.5]
+##
+##mat2= [mat, mat]
+##
+##print(evaluate_individual(mat))
+##
