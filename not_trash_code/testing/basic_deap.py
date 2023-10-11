@@ -3,7 +3,7 @@ from deap import tools
 from deap import creator
 import random
 import fitness_evaluation
-import unity_interface
+# import unity_interface
 
 toolbox = base.Toolbox()
 
@@ -26,7 +26,7 @@ def train():
     toolbox.register('mate', tools.cxTwoPoint)
     toolbox.register('mutate', tools.mutGaussian, mu=0, sigma=1, indpb=0.2)
     toolbox.register('select', tools.selTournament, tournsize=3)
-    toolbox.register('evaluate_population', fitness_evaluation.evaluate_individual)
+    toolbox.register('evaluate_population', fitness_evaluation.evaluate_population)
     toolbox.register('population', tools.initRepeat, list, toolbox.individual)
 
     population = toolbox.population(n=POP_SIZE)
@@ -48,14 +48,14 @@ def train():
 
         invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
         # fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-        fitnesses = toolbox.map(toolbox.evaluate, [env, invalid_ind])
-        for ind, fit in zip(invalid_ind, fitnesses):
-            ind.fitness.values = fit
+        # fitnesses = toolbox.map(toolbox.evaluate, [env, invalid_ind])
+        # for ind, fit in zip(invalid_ind, fitnesses):
+        #     ind.fitness.values = fit
 
         # for ind, fit in zip(invalid_ind, fitnesses):
         #     ind.fitness.values = fit
 
-        toolbox.evaluate_population(invalid_ind)
+        toolbox.evaluate_population(invalid_ind, env)
         population[:] = offspring
 
     # print(population)
