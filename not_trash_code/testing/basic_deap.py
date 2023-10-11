@@ -47,13 +47,10 @@ def train():
                 del mutant.fitness.values
 
         invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-<<<<<<< HEAD
         # fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-=======
         fitnesses = toolbox.map(toolbox.evaluate, [env, invalid_ind])
         for ind, fit in zip(invalid_ind, fitnesses):
             ind.fitness.values = fit
->>>>>>> origin/main
 
         # for ind, fit in zip(invalid_ind, fitnesses):
         #     ind.fitness.values = fit
@@ -61,11 +58,9 @@ def train():
         toolbox.evaluate_population(invalid_ind)
         population[:] = offspring
 
-<<<<<<< HEAD
     # print(population)
-=======
+
     print(population)
     unity_interface.stop_env(env)
->>>>>>> origin/main
 
 train()
