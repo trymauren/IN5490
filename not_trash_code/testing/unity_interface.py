@@ -64,7 +64,7 @@ def main():
         send_actions_to_unity(env, all_actions)
     env.close()
 
-def start_env(executable_file: str = None) -> UnityEnvironment:
+def start_env(executable_file: str = None, graphics: bool = True) -> UnityEnvironment:
     """Starting a unity environment. 
 
     Args:
@@ -73,7 +73,7 @@ def start_env(executable_file: str = None) -> UnityEnvironment:
         UnityEnvironment: return the unity environment
     """
     string_log = StringLogChannel()
-    env = UnityEnvironment(file_name=executable_file, side_channels=[string_log])
+    env = UnityEnvironment(file_name=executable_file, no_graphics=graphics, side_channels=[string_log])
     env.reset()
     return env 
 
@@ -104,14 +104,11 @@ def send_actions_to_unity(env: UnityEnvironment, actions: np.array) -> list:
                 positions.append([decision_steps.obs[0][:, :3]])
         env.step()
 
-    
-    env.step()
-
     for j in range(num_agents):
         decision_steps, _ = env.get_steps(behavior_names[j])
         positions[j].append(decision_steps.obs[0][:, :3])
 
-    #env.close()            
+    env.close()            
     return positions
 
 def stop_env(env) -> None:

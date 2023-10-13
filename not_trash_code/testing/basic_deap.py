@@ -3,7 +3,7 @@ from deap import tools
 from deap import creator
 import random
 import fitness_evaluation
-# import unity_interface
+import unity_interface
 
 toolbox = base.Toolbox()
 
@@ -14,7 +14,7 @@ def train():
     CXPB = 0.1
     MUTPB = 0.1
     #staring env
-    env = unity_interface.start_env(executable_file="C:/Users/oyo12/3D Objects/exe_filer/UnityEnvironment.exe")
+    # env = unity_interface.start_env(executable_file="C:/Users/oyo12/3D Objects/exe_filer/UnityEnvironment.exe")
 
     creator.create('FitnessMin', base.Fitness, weights=(1.0,))
     creator.create('Individual', list, fitness=creator.FitnessMin)
@@ -55,12 +55,13 @@ def train():
         # for ind, fit in zip(invalid_ind, fitnesses):
         #     ind.fitness.values = fit
 
+        env = None
         toolbox.evaluate_population(invalid_ind, env)
         population[:] = offspring
 
     # print(population)
 
     print(population)
-    unity_interface.stop_env(env)
+    #unity_interface.stop_env(env)
 
 train()
