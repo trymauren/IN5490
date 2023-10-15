@@ -99,7 +99,7 @@ class UnityInterface():
         for action in actions:
             transposed_array.append(np.transpose(action))
             
-        for i in range(len(transposed_array[0])):
+        for i in range(0, len(transposed_array[0]), num_agents):
             for k in range(num_agents):
                 decision_steps, _ = self.env.get_steps(behavior_names[k])
                 agent_action = transposed_array[k]
@@ -118,15 +118,15 @@ class UnityInterface():
          
         return positions
 
-def stop_env(env) -> None:
-    env.close()  
+def stop_env(self) -> None:
+    self.env.close() 
 
-def reset_env(env) -> None:
-    env.reset()
-
-
+def reset_env(self) -> None:
+    self.env.reset()
 
 
-if __name__ == "__main__":
-    main()
+
+
+# if __name__ == "__main__":
+#     main()
 

@@ -52,6 +52,6 @@ def train(train_config, unity_interface):
         toolbox.evaluate_population(invalid_ind, unity_interface)
         population[:] = offspring
 
-    unity_interface.stop_env(env)
+    #unity_interface.stop_env(env)
 
 
