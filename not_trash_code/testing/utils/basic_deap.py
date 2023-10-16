@@ -9,7 +9,8 @@ from utils import functions
 def train(train_config, unity_interface):
 
     toolbox = base.Toolbox()
-
+    halloffame = tools.HallOfFame(1)
+    
     creator.create('FitnessMin', base.Fitness, weights=(1.0,))
     creator.create('Individual', list, fitness=creator.FitnessMin)
 
@@ -52,6 +53,7 @@ def train(train_config, unity_interface):
         toolbox.evaluate_population(invalid_ind, unity_interface)
         population[:] = offspring
 
-    #unity_interface.stop_env(env)
+        halloffame.update(population)
 
 
+    return population
