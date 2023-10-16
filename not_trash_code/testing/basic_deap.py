@@ -28,6 +28,8 @@ def train():
     toolbox.register('select', tools.selTournament, tournsize=3)
     toolbox.register('evaluate_population', fitness_evaluation.evaluate_population)
     toolbox.register('population', tools.initRepeat, list, toolbox.individual)
+    halloffame = tools.HallOfFame(1)
+
 
     population = toolbox.population(n=POP_SIZE)
 
@@ -58,10 +60,6 @@ def train():
         env = None
         toolbox.evaluate_population(invalid_ind, env)
         population[:] = offspring
+        halloffame.update(population)
 
-    # print(population)
-
-    print(population)
-    #unity_interface.stop_env(env)
-
-train()
+    return population
