@@ -118,11 +118,11 @@ class UnityInterface():
          
         return positions
 
-def stop_env(self) -> None:
-    self.env.close() 
+    def stop_env(self) -> None:
+        self.env.close() 
 
-def reset_env(self) -> None:
-    self.env.reset()
+    def reset_env(self) -> None:
+        self.env.reset()
 
 
 
