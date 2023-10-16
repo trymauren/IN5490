@@ -65,11 +65,11 @@ class StringLogChannel(SideChannel):
 #     env.close()
 class UnityInterface():
 
-    def __init__(self, executable_file: str = None, no_graphics: bool = True):
-        self.env = self.start_env(executable_file=executable_file, no_graphics=no_graphics)
+    def __init__(self, executable_file: str = None, no_graphics: bool = True, worker_id : int = 0):
+        self.env = self.start_env(executable_file=executable_file, no_graphics=no_graphics, worker_id=worker_id)
 
 
-    def start_env(self, executable_file: str = None, no_graphics: bool = True) -> UnityEnvironment:
+    def start_env(self, executable_file: str = None, no_graphics: bool = True, worker_id: int = 0) -> UnityEnvironment:
         """Starting a unity environment. 
 
         Args:
@@ -78,7 +78,7 @@ class UnityInterface():
             UnityEnvironment: return the unity environment
         """
         string_log = StringLogChannel()
-        env = UnityEnvironment(file_name=executable_file, no_graphics=no_graphics, side_channels=[string_log])
+        env = UnityEnvironment(file_name=executable_file, no_graphics=no_graphics, side_channels=[string_log], worker_id=worker_id)
         env.reset()
         return env
 
