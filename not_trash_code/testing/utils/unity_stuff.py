@@ -99,7 +99,7 @@ class UnityInterface():
         for action in actions:
             transposed_array.append(np.transpose(action))
             
-        for i in range(0, len(transposed_array[0]), num_agents):
+        for i in range(0, len(transposed_array[0])):
             for k in range(num_agents):
                 decision_steps, _ = self.env.get_steps(behavior_names[k])
                 agent_action = transposed_array[k]
