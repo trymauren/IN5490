@@ -66,8 +66,11 @@ class StringLogChannel(SideChannel):
 class UnityInterface():
 
     def __init__(self, executable_file: str = None, no_graphics: bool = True, worker_id : int = 0):
-        self.env = self.start_env(executable_file=executable_file, no_graphics=no_graphics, worker_id=worker_id)
+        
 
+        self.env = self.start_env(executable_file=executable_file, no_graphics=no_graphics, worker_id=worker_id)
+        behavior_names = list(self.env.behavior_specs.keys())
+        self.num_agents = len(behavior_names)
 
     def start_env(self, executable_file: str = None, no_graphics: bool = True, worker_id: int = 0) -> UnityEnvironment:
         """Starting a unity environment. 
@@ -87,20 +90,19 @@ class UnityInterface():
         self.env.reset()
 
         behavior_names = list(self.env.behavior_specs.keys())
-        num_agents = len(behavior_names)
         num_actions = len(actions)
         positions = [] #[start pos, end pos]
         
-        if num_actions != num_agents:
-            print(f"Need more actions, training with {num_agents} agents!")
+        if num_actions != self.num_agents:
+            print(f"Need more actions, training with {self.num_agents} agents!")
             return
         
         transposed_array = []
         for action in actions:
             transposed_array.append(np.transpose(action))
             
-        for i in range(0, len(transposed_array[0]), num_agents):
-            for k in range(num_agents):
+        for i in range(0, len(transposed_array[0]), self.num_agents):
+            for k in range(self.num_agents):
                 decision_steps, _ = self.env.get_steps(behavior_names[k])
                 agent_action = transposed_array[k]
                 step = np.array([agent_action[i]])
@@ -112,7 +114,7 @@ class UnityInterface():
                     positions.append([decision_steps.obs[0][:, :3]])
             self.env.step()
 
-        for j in range(num_agents):
+        for j in range(self.num_agents):
             decision_steps, _ = self.env.get_steps(behavior_names[j])
             positions[j].append(decision_steps.obs[0][:, :3])
          
