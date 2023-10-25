@@ -23,7 +23,7 @@ parameters mentioned at the end of section 2's first paragraph.
 
 #https://deap.readthedocs.io/en/master/api/algo.html#module-deap.cma
 
-import fitness_evaluation
+from utils import fitness_evaluation
 from collections import deque
 
 import numpy
@@ -36,17 +36,18 @@ from deap import creator
 from deap import tools
 
 # Problem size
-N = 30
+N = 36
 
 creator.create("FitnessMin", base.Fitness, weights=(1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMin)
 
 def main(verbose=True):
+    numpy.random.seed(128)
     NRESTARTS = 10  # Initialization + 9 I-POP restarts
     SIGMA0 = 2.0    # 1/5th of the domain [-5 5]
 
     toolbox = base.Toolbox()
-    toolbox.register("evaluate", fitness_evaluation.evaluate_individual)
+    toolbox.register("evaluate", fitness_evaluation.test_evaluate_individual)
 
     halloffame = tools.HallOfFame(1)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -87,6 +88,7 @@ def main(verbose=True):
             MAXITER = 100 + 50 * (N + 3)**2 / numpy.sqrt(lambda_)
         elif regime == 2:
             MAXITER = 0.5 * largebudget[-1] / lambda_
+            
         TOLHISTFUN = 10**-12
         TOLHISTFUN_ITER = 10 + int(numpy.ceil(30. * N / lambda_))
         EQUALFUNVALS = 1. / 3.
