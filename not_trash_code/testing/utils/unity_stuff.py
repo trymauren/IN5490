@@ -117,7 +117,7 @@ class UnityInterface():
             decision_steps, _ = self.env.get_steps(self.behavior_names[j])
             positions[j].append(decision_steps.obs[0][:, :3][0])
          
-        return positions
+        return positionsB
 
     def stop_env(self) -> None:
         self.env.close() 
