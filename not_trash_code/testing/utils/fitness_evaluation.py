@@ -1,11 +1,13 @@
 import numpy as np
 import time
+from tqdm import tqdm
 
 def evaluate_population(population, unity_interface) -> None:
 	# return ([0]*len(population),) # testmode
 	fitnesses = [0]*len(population)
-	for i in range(len(population)):
-		fitnesses[i] = evaluate_individual(population[i], unity_interface)
+	for i in tqdm(range(0, len(population), 30)):
+		subset = population[i:i+30]
+		fitnesses[i] = evaluate_individual(subset, unity_interface)
 
 	return fitnesses
 
@@ -14,15 +16,27 @@ def evaluate_individual(individual, unity_interface, verbose=False) -> tuple:
 	Evaluates the fitness of an individuals genes. Used by DEAP.
 		Arg: individual
 	"""
-	movement = compute_movement(individual)
-	movement_rep = repeat_movment(movement, 5)
-	coordinates = unity_interface.send_actions_to_unity([movement_rep])
-	fitness = np.sqrt(coordinates[0][1][0][2]**2 + coordinates[0][1][0][0]**2)
+	all_movmets = []
+	for i in range(len(individual)):
+		movement = compute_movement(individual[i])
+		movement_rep = repeat_movment(movement, 5)
+		all_movmets.append(movement_rep)
+
+	coordinates = unity_interface.send_actions_to_unity(all_movmets)
+
+	fitness = []
+	for j in range(len(coordinates)):
+		fit = np.sqrt(coordinates[j][1][0]**2 + coordinates[j][1][2]**2)
+		# fit = np.sqrt(coordinates[0][1][0][2]**2 + coordinates[0][1][0][0]**2)
+		fitness.append(fit)
 	
 	if verbose: print("---------------fitness----------")
-	print(fitness)
+	print(max(fitness))
 
-	return (fitness,) # must return tuple!
+	return (fitness) # must return tuple!
+# [array([1.3351440e-05, 1.3962054e-01, 1.1444092e-05], dtype=float32), start 
+#  array([ 0.2965622 , -0.13715017,  0.31038666], dtype=float32)]       slutt
+	
 
 def compute_movement(individual) -> np.array(np.array):
 	"""

@@ -109,12 +109,12 @@ class UnityInterface():
                 self.env.set_actions(behavior_names[k], action_tuple)
 
                 if i == 0:
-                    positions.append([decision_steps.obs[0][:, :3]])
+                    positions.append([decision_steps.obs[0][:, :3][0]])
             self.env.step()
 
         for j in range(num_agents):
             decision_steps, _ = self.env.get_steps(behavior_names[j])
-            positions[j].append(decision_steps.obs[0][:, :3])
+            positions[j].append(decision_steps.obs[0][:, :3][0])
          
         return positions
 
