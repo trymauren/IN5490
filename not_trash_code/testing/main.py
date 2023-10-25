@@ -6,7 +6,7 @@ from utils import fitness_evaluation
 
 import os
 # Set path for data
-executable_path = os.path.abspath('..') #Working directory path (Where program is run from)
+executable_path = os.path.abspath('') #Working directory path (Where program is run from)
 executable_path += '/executables/'
 
 def main():
