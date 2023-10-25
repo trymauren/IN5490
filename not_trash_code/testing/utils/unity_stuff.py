@@ -69,8 +69,8 @@ class UnityInterface():
         
 
         self.env = self.start_env(executable_file=executable_file, no_graphics=no_graphics, worker_id=worker_id)
-        behavior_names = list(self.env.behavior_specs.keys())
-        self.num_agents = len(behavior_names)
+        self.self.behavior_names = list(self.env.behavior_specs.keys())
+        self.num_agents = len(self.behavior_names)
 
     def start_env(self, executable_file: str = None, no_graphics: bool = True, worker_id: int = 0) -> UnityEnvironment:
         """Starting a unity environment. 
@@ -89,7 +89,6 @@ class UnityInterface():
 
         self.env.reset()
 
-        behavior_names = list(self.env.behavior_specs.keys())
         num_actions = len(actions)
         positions = [] #[start pos, end pos]
         
@@ -102,20 +101,20 @@ class UnityInterface():
             transposed_array.append(np.transpose(action))
             
         for i in range(0, len(transposed_array[0])):
-            for k in range(num_agents):
-                decision_steps, _ = self.env.get_steps(behavior_names[k])
+            for k in range(self.num_agents):
+                decision_steps, _ = self.env.get_steps(self.behavior_names[k])
                 agent_action = transposed_array[k]
                 step = np.array([agent_action[i]])
                 action_tuple = ActionTuple()
                 action_tuple.add_continuous(step)
-                self.env.set_actions(behavior_names[k], action_tuple)
+                self.env.set_actions(self.behavior_names[k], action_tuple)
 
                 if i == 0:
                     positions.append([decision_steps.obs[0][:, :3][0]])
             self.env.step()
 
         for j in range(self.num_agents):
-            decision_steps, _ = self.env.get_steps(behavior_names[j])
+            decision_steps, _ = self.env.get_steps(self.behavior_names[j])
             positions[j].append(decision_steps.obs[0][:, :3][0])
          
         return positions
