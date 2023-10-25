@@ -9,7 +9,8 @@ executable_path = os.path.abspath('..') #Working directory path (Where program i
 executable_path += '/executables/'
 
 def main():
-	unity_interface = unity_stuff.UnityInterface(executable_file=functions.get_executable(executable_path), no_graphics=False, worker_id=1)
+	params = {'executable_file':functions.get_executable(executable_path),'no_graphics':True, 'worker_id':1}
+	unity_interface = unity_stuff.UnityInterface(**params)
 	best = basic_deap.train(train_config, unity_interface)
 	print(best)
     
@@ -17,4 +18,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
