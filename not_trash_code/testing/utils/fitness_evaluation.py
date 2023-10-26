@@ -10,10 +10,8 @@ def evaluate_population(population, unity_interface) -> None:
 				why tuple? https://deap.readthedocs.io/en/master/overview.html
 	"""
 	fitnesses = [0]*len(population)
-	print('Len population', len(population))
-	for i in tqdm(range(0, len(population), 30)):
+	for i in range(0, len(population), 30):
 		subset = population[i:i+30] # fix this slice
-		print('Len population', len(subset))
 		fitnesses[i:i+30] = evaluate_group(subset, unity_interface)
 
 	return fitnesses
@@ -24,11 +22,10 @@ def evaluate_group(group, unity_interface, verbose=False) -> tuple:
 		Arg: individual
 		Ret: list containing tuples containing fitness of an individual
 	"""
-	print('\n\n\nLen group: ',len(group))
 	all_movmets = []
 	for i in range(len(group)):
 		movement = compute_movement(group[i])
-		movement_rep = repeat_movment(movement, 5) # 5 should be switched to config file?
+		movement_rep = repeat_movment(movement, 20) # 5 should be switched to config file?
 		all_movmets.append(movement_rep)
 
 	coordinates = unity_interface.send_actions_to_unity(all_movmets)
@@ -65,7 +62,7 @@ def compute_movement(individual, num_move_directions=12) -> np.array(np.array):
 
 def repeat_movment(movement, repetitions, num_move_directions=12, num_movements=10):
 	"""
-	ØYYYYYSTEIN dokumenteeeeeer 
+	ØYYYYYSTEIN dokumenteeeeeer sorry  
 	"""
 	movement_rep = np.zeros((num_move_directions,num_movements*repetitions))
 	for i in range(num_move_directions):

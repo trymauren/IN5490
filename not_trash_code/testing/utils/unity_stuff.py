@@ -20,6 +20,11 @@ class StringLogChannel(SideChannel):
         msg.write_string(data)
         super().queue_message_to_send(msg)
 
+    def set_time_scale(self, time_scale: float) -> None:
+        msg = OutgoingMessage()
+        msg.write_string(f"SET_TIME_SCALE:{time_scale}")
+        super().queue_message_to_send(msg)
+
 #---------------------------------------------------------------------------
 
 # #Used for testing/example use
@@ -67,13 +72,15 @@ class UnityInterface():
 
     def __init__(self, executable_file: str = None, no_graphics: bool = True, worker_id : int = 0):
         
-
+        self.String_log_channel = StringLogChannel()
         self.env = self.start_env(executable_file=executable_file, no_graphics=no_graphics, worker_id=worker_id)
         self.behavior_names = list(self.env.behavior_specs.keys())
         self.num_agents = len(self.behavior_names)
-        print(self.num_agents)
-        print(self.behavior_names)
-        print(self.env)
+        self.set_time_scale(5)  # Speeeeeeeeeeeeeeeeeed up time!!!!!!!!!!!!!!
+
+    def set_time_scale(self, time_scale: float) -> None:
+        self.String_log_channel.set_time_scale(time_scale) 
+
     def start_env(self, executable_file: str = None, no_graphics: bool = True, worker_id: int = 0) -> UnityEnvironment:
         """Starting a unity environment. 
 
@@ -83,16 +90,15 @@ class UnityInterface():
             UnityEnvironment: return the unity environment
         """
         string_log = StringLogChannel()
-        env = UnityEnvironment(file_name=executable_file, no_graphics=no_graphics, side_channels=[string_log], worker_id=worker_id)
+        env = UnityEnvironment(file_name=executable_file, no_graphics=no_graphics, side_channels=[self.String_log_channel], worker_id=worker_id)
         env.reset()
         return env
 
     def send_actions_to_unity(self, actions: np.array) -> list:
-        print('hfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\n')
         self.env.reset()
 
         num_actions = len(actions)
-        positions = [] #[start pos, end pos]
+        positions = [] #[end pos]
         
         if num_actions < self.num_agents:
             print(f"Need more actions, training with {self.num_agents} agents and {len(actions)} actions")
@@ -112,13 +118,15 @@ class UnityInterface():
                 action_tuple.add_continuous(step)
                 self.env.set_actions(self.behavior_names[k], action_tuple)
 
-                if i == 0:
-                    positions.append([decision_steps.obs[0][:, :3][0]])
+                # if i == 0:
+                #     positions.append([decision_steps.obs[0][:, :3][0]])
             self.env.step()
-
+            
         for j in range(self.num_agents):
             decision_steps, _ = self.env.get_steps(self.behavior_names[j])
-            positions[j].append(decision_steps.obs[0][:, :3][0])
+            positions.append([decision_steps.obs[0][:, :3][0]])
+
+        print(positions)
         
         return positions
 

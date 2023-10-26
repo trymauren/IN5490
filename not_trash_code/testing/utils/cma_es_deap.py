@@ -37,7 +37,7 @@ from deap import creator
 from deap import tools
 
 # Problem size
-N = 36
+N = 30
 
 creator.create("FitnessMin", base.Fitness, weights=(1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMin)
@@ -62,7 +62,9 @@ def train(unity_interface, verbose=True):
     nsmallpopruns = 0
     smallbudget = list()
     largebudget = list()
-    lambda0 = 4 + int(3 * numpy.log(N))
+    # lambda0 = 4 + int(3 * numpy.log(N))
+    lambda0 = 30
+
     regime = 1
     i = 0
 
@@ -206,7 +208,3 @@ def train(unity_interface, verbose=True):
         i += 1
 
     return halloffame
-
-if __name__ == "__main__":
-    best = main()
-    print(best)
