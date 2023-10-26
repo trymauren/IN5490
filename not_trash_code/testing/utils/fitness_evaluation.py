@@ -32,7 +32,7 @@ def evaluate_group(group, unity_interface, verbose=False) -> tuple:
 
 	fitness = []
 	for j in range(len(coordinates)):
-		fit = np.sqrt(coordinates[j][1][0]**2 + coordinates[j][1][2]**2)
+		fit = coordinates[j][2]
 		# fit = np.sqrt(coordinates[0][1][0][2]**2 + coordinates[0][1][0][0]**2)
 		fitness.append((fit,)) # must add tuple to list! why: https://deap.readthedocs.io/en/master/overview.html
 	
@@ -41,8 +41,7 @@ def evaluate_group(group, unity_interface, verbose=False) -> tuple:
 		print(max(fitness))
 
 	return fitness 
-# [array([1.3351440e-05, 1.3962054e-01, 1.1444092e-05], dtype=float32), start 
-#  array([ 0.2965622 , -0.13715017,  0.31038666], dtype=float32)]       slutt
+#[[array([ 3.6873782, -0.7602028,  0.4305477], dtype=float32)], [array([ 3.8278027 , -0.57440406,  1.8399124], dtype=float32)], ]
 
 
 def compute_movement(individual, num_move_directions=12) -> np.array(np.array):

@@ -124,9 +124,7 @@ class UnityInterface():
             
         for j in range(self.num_agents):
             decision_steps, _ = self.env.get_steps(self.behavior_names[j])
-            positions.append([decision_steps.obs[0][:, :3][0]])
-
-        print(positions)
+            positions.append(decision_steps.obs[0][:, :3][0])
         
         return positions
 
