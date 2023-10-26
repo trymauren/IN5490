@@ -69,9 +69,11 @@ class UnityInterface():
         
 
         self.env = self.start_env(executable_file=executable_file, no_graphics=no_graphics, worker_id=worker_id)
-        self.self.behavior_names = list(self.env.behavior_specs.keys())
+        self.behavior_names = list(self.env.behavior_specs.keys())
         self.num_agents = len(self.behavior_names)
-
+        print(self.num_agents)
+        print(self.behavior_names)
+        print(self.env)
     def start_env(self, executable_file: str = None, no_graphics: bool = True, worker_id: int = 0) -> UnityEnvironment:
         """Starting a unity environment. 
 
@@ -86,16 +88,17 @@ class UnityInterface():
         return env
 
     def send_actions_to_unity(self, actions: np.array) -> list:
-
+        print('hfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\n')
         self.env.reset()
 
         num_actions = len(actions)
         positions = [] #[start pos, end pos]
         
-        if num_actions != self.num_agents:
-            print(f"Need more actions, training with {self.num_agents} agents!")
-            return
-        
+        if num_actions < self.num_agents:
+            print(f"Need more actions, training with {self.num_agents} agents and {len(actions)} actions")
+        elif num_actions > self.num_agents:
+            print(f"Need more agents, training with {self.num_agents} agents and {len(actions)} actions")
+            
         transposed_array = []
         for action in actions:
             transposed_array.append(np.transpose(action))
@@ -116,7 +119,7 @@ class UnityInterface():
         for j in range(self.num_agents):
             decision_steps, _ = self.env.get_steps(self.behavior_names[j])
             positions[j].append(decision_steps.obs[0][:, :3][0])
-         
+        
         return positions
 
     def stop_env(self) -> None:
