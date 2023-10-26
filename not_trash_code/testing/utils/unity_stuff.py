@@ -71,9 +71,7 @@ class UnityInterface():
         self.env = self.start_env(executable_file=executable_file, no_graphics=no_graphics, worker_id=worker_id)
         self.behavior_names = list(self.env.behavior_specs.keys())
         self.num_agents = len(self.behavior_names)
-        print(self.num_agents)
-        print(self.behavior_names)
-        print(self.env)
+        
     def start_env(self, executable_file: str = None, no_graphics: bool = True, worker_id: int = 0) -> UnityEnvironment:
         """Starting a unity environment. 
 
@@ -88,7 +86,6 @@ class UnityInterface():
         return env
 
     def send_actions_to_unity(self, actions: np.array) -> list:
-        print('hfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\nhfwoufheiuwfhe\niuhiuewhuiwfe\n')
         self.env.reset()
 
         num_actions = len(actions)
