@@ -18,20 +18,8 @@ def main():
 	# best = basic_deap.train(train_config, unity_interface)
 	logbooks, halloffame = cma_es_deap.train(unity_interface)
 	pickle.dump(logbooks, f'logbook_{time.time()}')
-	# unity_interface.stop_env() #funker dette ??
-	# visualization = False
-	# best_res = None
-      
-	# if visualization:
-	# 	vis_unity_interface = unity_stuff.UnityInterface(executable_file=functions.get_executable(executable_path), no_graphics=False, worker_id=1)
-	# 	fitness_evaluation.evaluate_population(best_res, vis_unity_interface)
-	# 	vis_unity_interface.stop_env()
-	# else:
-	# 	unity_interface = unity_stuff.UnityInterface(executable_file=functions.get_executable(executable_path), no_graphics=False, worker_id=1)
-	# 	best = basic_deap.train(train_config, unity_interface)
-	# 	print(best)
-	# 	unity_interface.stop_env() #funker dette ??
-		
+	unity_interface.stop_env() #funker dette ?? kanskje, ja!!!!
+	
 
 if __name__ == "__main__":
     main()
