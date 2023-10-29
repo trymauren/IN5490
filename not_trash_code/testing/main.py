@@ -14,9 +14,8 @@ def main():
 	params = {'executable_file':functions.get_executable(executable_path),'no_graphics':False, 'worker_id':1}
 	unity_interface = unity_stuff.UnityInterface(**params)
 	# best = basic_deap.train(train_config, unity_interface)
-	halloffame = cma_es_deap.train(unity_interface)
-	print(halloffame)
-    
+	logbooks, halloffame = cma_es_deap.train(unity_interface)
+	picle.dump(logbooks, f'logbook_{time.time()}')
 	# unity_interface.stop_env() #funker dette ??
 	# visualization = False
 	# best_res = None
