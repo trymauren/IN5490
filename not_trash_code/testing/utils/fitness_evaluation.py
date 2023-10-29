@@ -32,8 +32,8 @@ def evaluate_group(group, unity_interface, verbose=False) -> tuple:
 
 	fitness = []
 	for j in range(len(coordinates)):
-		fit = coordinates[j][2]
-		# fit = np.sqrt(coordinates[0][1][0][2]**2 + coordinates[0][1][0][0]**2)
+		# fit = coordinates[j][2]
+		fit = np.sqrt(coordinates[j][0]**2 + coordinates[j][2]**2)
 		fitness.append((fit,)) # must add tuple to list! why: https://deap.readthedocs.io/en/master/overview.html
 	
 	if verbose:

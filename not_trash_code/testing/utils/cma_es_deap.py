@@ -31,6 +31,8 @@
 from utils import fitness_evaluation
 from collections import deque
 
+import pickle
+import time
 import numpy as np
 
 from deap import algorithms
@@ -62,10 +64,8 @@ def train(unity_interface, verbose=True):
     # TODO: move these to functions.py or something else
     def amplitude(ind):
         return np.mean(np.array([ind[i] for i in range(0,len(ind),3)]))
-
     def frequency(ind):
         return np.mean(np.array([ind[i] for i in range(1,len(ind),3)]))
-
     def phase_shift(ind):
         return np.mean(np.array([ind[i] for i in range(2,len(ind),3)]))
 
@@ -133,7 +133,7 @@ def train(unity_interface, verbose=True):
         mins = deque(maxlen=TOLHISTFUN_ITER)
 
         # We start with a centroid in [-4, 4]**D
-        strategy = cma.Strategy(centroid=np.random.uniform(-4, 4, N), sigma=sigma, lambda_=lambda_)
+        strategy = cma.Strategy(centroid=np.random.uniform(-1, 1, N), sigma=sigma, lambda_=lambda_)
         toolbox.register('generate', strategy.generate, creator.Individual)
         toolbox.register('update', strategy.update)
 
@@ -198,7 +198,7 @@ def train(unity_interface, verbose=True):
             elif regime == 2:
                 smallbudget[-1] += lambda_
 
-            # Here comes lots of stopping-criteria stuff, not so important
+            # Here comes lots of stopping-criteria stuff
             t += 1
             STAGNATION_ITER = int(np.ceil(0.2 * t + 120 + 30. * N / lambda_))
             NOEFFECTAXIS_INDEX = t % N
@@ -207,7 +207,8 @@ def train(unity_interface, verbose=True):
                 # The maximum number of iteration per CMA-ES ran
                 conditions['MaxIter'] = True
 
-            mins.append(logbooks[-1].chapters["fitness"].select("min"))
+            min_ = logbooks[-1].chapters['fitness'].select('min')
+            mins.append(min_)
             if (len(mins) == mins.maxlen) and max(mins) - min(mins) < TOLHISTFUN:
                 # The range of the best values is smaller than the threshold
                 conditions['TolHistFun'] = True
@@ -248,4 +249,4 @@ def train(unity_interface, verbose=True):
         print('Stopped because of condition%s %s' % ((':' if len(stop_causes) == 1 else 's:'), ','.join(stop_causes)))
         i += 1
 
-    return halloffame
+    return logbooks, halloffame
