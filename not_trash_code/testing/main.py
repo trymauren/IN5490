@@ -1,3 +1,5 @@
+import pickle
+from time import time
 from utils import basic_deap
 from utils import cma_es_deap
 from config import train_config
@@ -7,7 +9,7 @@ from utils import fitness_evaluation
 
 import os
 # Set path for data
-root = os.path.abspath('../')
+root = os.path.abspath('') # '../' for noobs
 executable_path = root + '/executables/'
 
 def main():
@@ -15,7 +17,7 @@ def main():
 	unity_interface = unity_stuff.UnityInterface(**params)
 	# best = basic_deap.train(train_config, unity_interface)
 	logbooks, halloffame = cma_es_deap.train(unity_interface)
-	picle.dump(logbooks, f'logbook_{time.time()}')
+	pickle.dump(logbooks, f'logbook_{time.time()}')
 	# unity_interface.stop_env() #funker dette ??
 	# visualization = False
 	# best_res = None
