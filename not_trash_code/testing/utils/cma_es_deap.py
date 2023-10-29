@@ -207,7 +207,7 @@ def train(unity_interface, verbose=True):
                 # The maximum number of iteration per CMA-ES ran
                 conditions['MaxIter'] = True
 
-            min_ = logbooks[-1].chapters['fitness'].select('min')
+            min_ = logbooks[-1].chapters['fitness'].select('min')[-1]
             mins.append(min_)
             if (len(mins) == mins.maxlen) and max(mins) - min(mins) < TOLHISTFUN:
                 # The range of the best values is smaller than the threshold
