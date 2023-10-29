@@ -77,10 +77,10 @@ def train(unity_interface, verbose=True):
     # Register statistics functions
     stats = tools.MultiStatistics(  fitness=stats_fitness, amplitude=stats_amplitude, 
                                     frequency=stats_frequency, phase_shift=stats_phase_shift)
-    stats.register('avg', np.mean)
-    stats.register('std', np.std)
-    stats.register('min', np.min)
-    stats.register('max', np.max)
+    stats.register('avg', lambda x: round(np.mean(x), 2))
+    stats.register('std', lambda x: round(np.std(x), 2))
+    stats.register('min', lambda x: round(np.min(x), 2))
+    stats.register('max', lambda x: round(np.max(x), 2))
 
     # Create a list to store all the logbooks. One logbook is created for each run.
     logbooks = list()
