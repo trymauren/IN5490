@@ -67,7 +67,7 @@ def get_executable(executable_path):
     if platform == "linux" or platform == "linux2":
         ret = executable_path + 'CHANGE_THIS'
     elif platform == "darwin":
-        ret = executable_path + 'exe_mac_30.app' 
+        ret = executable_path + 'exe_mac_test_m.app' 
     elif platform == "win32":
         ret = executable_path + 'exe_pc_test_m/UnityEnvironment.exe'
 
@@ -79,7 +79,7 @@ def dump_data(logbooks, halloffame, runs_path):
         Arg: List containing Logbook() objects, halloffame containing individual, path to runs dir
         Ret: None
     """
-    timestamp = datetime.today().strftime('%Y-%m-%d|%H:%M:%S')
+    timestamp = datetime.today().strftime('%Y-%m-%d;%H:%M:%S')
     logbook_path = os.path.join(runs_path, 'logbook_' + timestamp)
     halloffame_path = os.path.join(runs_path,'halloffame_' + timestamp)
     dump_logbook(logbooks, logbook_path)
