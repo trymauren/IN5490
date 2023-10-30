@@ -57,16 +57,20 @@ class UnityInterface():
         
         if len(actions) > self.num_agents:
             print(f"Need more agents, training with {self.num_agents} agents and {len(actions)} actions")
-        
+        positions = []
         # Looping over number of movements to evaluate
-        for i in range(len(actions[0][0])): 
-            
+
+        for i in range(20):
+            self.env.step()
+
+        for i in range(len(actions[0][0])): # for 10 or 200
+
             # Looping over all actions (one for each agent) to evaluate
             # - one action is composed of many movements
-            for action_i, individual in enumerate(actions):
-
+            for action_i, individual in enumerate(actions): # for 30 agents
+                
                 # Shape the sequence of movements
-                step = np.array([np.array([movement_dir[i] for limb_i, movement_dir in enumerate(individual)])])
+                step = np.array([np.array([movement_dir[i] for movement_dir in individual])]) # for 12
 
                 # Creates a datastructure that Unity understands
                 action_tuple = ActionTuple()
@@ -74,14 +78,13 @@ class UnityInterface():
 
                 # Sets actions for all agents in a behavior name.
                 self.env.set_actions(self.behavior_names[action_i], action_tuple) 
-            
+
+                if i >= len(actions[0][0]) - 1:
+                    decision_steps, _ = self.env.get_steps(self.behavior_names[action_i])
+                    positions.append(decision_steps.obs[0][0][:3]) # this works
+
             self.env.step()
 
-        # Fetches position of all agents
-        positions = [] #[end pos]
-        for j in range(len(actions)):
-            decision_steps, _ = self.env.get_steps(self.behavior_names[j])  
-            positions.append(decision_steps.obs[0][:, :3][0])
         return positions
 
     def stop_env(self) -> None:
