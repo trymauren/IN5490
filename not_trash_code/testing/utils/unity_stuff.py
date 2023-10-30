@@ -2,41 +2,15 @@ import numpy as np
 from mlagents_envs.environment import UnityEnvironment
 from mlagents_envs.base_env import ActionTuple
 from mlagents_envs.environment import UnityEnvironment
-from mlagents_envs.side_channel.side_channel import (SideChannel, IncomingMessage, OutgoingMessage)
 import numpy as np
-import uuid
-
-#------------------------------SideChannel---------------------------------
-class StringLogChannel(SideChannel):
-
-    def __init__(self) -> None:
-        super().__init__(uuid.UUID("621f0a70-4f87-11ea-a6bf-784f4387d1f7"))
-
-    def on_message_received(self, msg: IncomingMessage) -> None:
-        print(msg.read_string())
-
-    def send_string(sefl, data: str) -> None:
-        msg = OutgoingMessage()
-        msg.write_string(data)
-        super().queue_message_to_send(msg)
-
-    def set_time_scale(self, time_scale: float) -> None:
-        msg = OutgoingMessage()
-        msg.write_string(f"SET_TIME_SCALE:{time_scale}")
-        super().queue_message_to_send(msg)
 
 class UnityInterface():
 
     def __init__(self, executable_file: str = None, no_graphics: bool = True, worker_id : int = 0):
-        
-        self.String_log_channel = StringLogChannel()
+    
         self.env = self.start_env(executable_file=executable_file, no_graphics=no_graphics, worker_id=worker_id)
         self.behavior_names = list(self.env.behavior_specs.keys())
         self.num_agents = len(self.behavior_names)
-        self.set_time_scale(5)  # Speeeeeeeeeeeeeeeeeed up time!!!!!!!!!!!!!!
-
-    def set_time_scale(self, time_scale: float) -> None:
-        self.String_log_channel.set_time_scale(time_scale) 
 
     def start_env(self, executable_file: str = None, no_graphics: bool = True, worker_id: int = 0) -> UnityEnvironment:
         """Starting a unity environment. 
@@ -46,8 +20,7 @@ class UnityInterface():
         Returns:
             UnityEnvironment: return the unity environment
         """
-        string_log = StringLogChannel()
-        env = UnityEnvironment(file_name=executable_file, no_graphics=no_graphics, side_channels=[self.String_log_channel], worker_id=worker_id)
+        env = UnityEnvironment(file_name=executable_file, no_graphics=no_graphics, worker_id=worker_id)
         env.reset()
         return env
 
@@ -90,9 +63,5 @@ class UnityInterface():
     def reset_env(self) -> None:
         self.env.reset()
 
-
-
-
-# if __name__ == "__main__":
-#     main()
-
+    def get_agents(self) -> int:
+        return self.num_agents
