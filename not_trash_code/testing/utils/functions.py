@@ -69,7 +69,7 @@ def get_executable(executable_path):
     elif platform == "darwin":
         ret = executable_path + 'exe_mac_30.app' 
     elif platform == "win32":
-        ret = executable_path + 'exe_pc_30/UnityEnvironment.exe'
+        ret = executable_path + 'exe_pc_test_m/UnityEnvironment.exe'
 
     return ret
 

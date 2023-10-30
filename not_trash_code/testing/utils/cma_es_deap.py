@@ -89,7 +89,7 @@ def train(unity_interface, verbose=True):
     smallbudget = list()
     largebudget = list()
     # lambda0 = 4 + int(3 * np.log(N)) # population size - dynamic, dependent on individual size
-    lambda0 = 30 # population size - static
+    lambda0 = 100 # population size - static
     regime = 1
     
     i = 0

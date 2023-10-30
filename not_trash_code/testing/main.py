@@ -6,6 +6,7 @@ from config import train_config, interface_config
 from utils import functions
 from utils import unity_stuff
 from utils import fitness_evaluation
+import numpy as np
 
 import os
 import sys
