@@ -1,12 +1,11 @@
-train_config = {
-'IND_SIZE' 			: 36,
-'NGEN' 				: 100,
-'POP_SIZE' 			: 60,
-'CXPB' 				: 0.1,
-'MUTPB' 			: 0.1,
+ea_config = {
+'pop_size'			: 30,
+'std_dev'			: 3,
+'genome_len'		: 36,
+'num_mov_repeat'	: 30
 }
 
 interface_config = {
-'no_graphics'		:False,
-'worker_id'			:1
+'no_graphics'		:True,
+'worker_id'			:2
 }
