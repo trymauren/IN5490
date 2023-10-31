@@ -1,6 +1,7 @@
 import numpy as np
 import time
 from tqdm import tqdm
+from config import ea_config
 
 def evaluate_population(population, unity_interface) -> None:
 	"""
@@ -17,7 +18,7 @@ def evaluate_population(population, unity_interface) -> None:
 
 	return fitnesses
 
-def evaluate_group(group, unity_interface, repetitions = 50) -> tuple:
+def evaluate_group(group, unity_interface, repetitions=ea_config['num_mov_repeat']) -> tuple:
 	"""
 	Evaluates the fitness of an individuals genes. Used by DEAP.
 		Arg: individual
