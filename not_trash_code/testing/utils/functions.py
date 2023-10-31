@@ -12,8 +12,10 @@ from deap import tools
 import shelve
 
 import matplotlib.pyplot as plt
+from config import ea_config
 
 def make_plots_from_logbook(path):
+    timestamp = datetime.today().strftime('%Y-%m-%d;%H:%M:%S')
     path_w_out_extension = os.path.splitext(path)[0]
     logbooks = []
     with shelve.open(path_w_out_extension, 'c') as fp: 
@@ -55,10 +57,10 @@ def make_plots_from_logbook(path):
         ax4.set_xlabel('Generation', fontsize=12)
         ax4.set_ylabel('Phase Shift', fontsize=12)
         ax4.grid(True)
-        plt.show()
+        plt.savefig('4xplot_timestamp.svg')
     print(' -- Made plots')
 
-def get_executable(executable_path):
+def get_executable(executable_path, pop_size=ea_config['pop_size']):
     """
     Fetches the executable, automatically depending on the OS.
         Arg: Path to the executable folder
@@ -67,9 +69,17 @@ def get_executable(executable_path):
     if platform == "linux" or platform == "linux2":
         ret = executable_path + 'CHANGE_THIS'
     elif platform == "darwin":
-        ret = executable_path + 'exe_mac_test_m.app' 
+        if pop_size > 30:
+            ret = executable_path + 'exe_mac_30.app' 
+        elif pop_size <= 30:
+            ret = executable_path + 'exe_mac_test_m.app' 
+
     elif platform == "win32":
-        ret = executable_path + 'exe_pc_test_m/UnityEnvironment.exe'
+        if pop_size > 30:
+            ret = executable_path + 'exe_pc_30/UnityEnvironment.exe' 
+        elif pop_size <= 30:
+            ret = executable_path + 'exe_pc_test_m/UnityEnvironment.exe' 
+        
 
     return ret
 
