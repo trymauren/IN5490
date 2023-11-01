@@ -14,8 +14,11 @@ import shelve
 import matplotlib.pyplot as plt
 from config import ea_config
 
+def fetch_timestamp():
+    return datetime.today().strftime('%Y_%m_%d_%H_%M_%S')
+
 def make_plots_from_logbook(path):
-    timestamp = datetime.today().strftime('%Y-%m-%d;%H:%M:%S')
+    timestamp = fetch_timestamp()
     path_w_out_extension = os.path.splitext(path)[0]
     logbooks = []
     with shelve.open(path_w_out_extension, 'c') as fp: 
@@ -86,14 +89,13 @@ def dump_data(logbooks, halloffame, runs_path):
         Arg: List containing Logbook() objects, halloffame containing individual, path to runs dir
         Ret: None
     """
-    timestamp = datetime.today().strftime('%Y_%m_%d_%H_%M_%S')
+    timestamp = fetch_timestamp()
     logbook_path = os.path.join(runs_path, 'logbook_' + timestamp)
     halloffame_path = os.path.join(runs_path,'halloffame_' + timestamp)
     dump_logbook(logbooks, logbook_path)
     dump_halloffame(halloffame, halloffame_path)
 
 def dump_logbook(data, path):
-    print('hrireionreoijfo')
     """
     Dumps the data using pickle
         Arg: List containing Logbook() objects
