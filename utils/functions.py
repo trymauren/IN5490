@@ -72,15 +72,20 @@ def get_executable(executable_path, pop_size=ea_config['pop_size']):
     if platform == "linux" or platform == "linux2":
         ret = executable_path + 'exe_linux_test_m'
     elif platform == "darwin":
-        if pop_size <= 30:
+        if pop_size == 1:
+            ret = executable_path + 'exe_mac.app'
+        elif pop_size <= 30:
             ret = executable_path + 'exe_mac_30.app' 
         elif pop_size > 30:
             ret = executable_path + 'exe_mac_test_m.app' 
     elif platform == "win32":
         if pop_size > 30:
             ret = executable_path + 'exe_pc_30/UnityEnvironment.exe' 
+        elif pop_size == 1:
+            ret = executable_path + 'exe_pc/UnityEnvironment.exe'
         elif pop_size <= 30:
             ret = executable_path + 'exe_pc_test_m/UnityEnvironment.exe' 
+        
     return ret
 
 def dump_data(logbooks, halloffame, runs_path):
@@ -116,6 +121,7 @@ def dump_halloffame(data, path):
     with shelve.open(path, 'c') as fp: 
         for i, d in enumerate(data):
             fp[str(i)] = d
+            print(d)
     print(' -- Dumped halloffame')
 
 def get_newest_file_paths(path_to_dir):
@@ -163,3 +169,19 @@ def get_specific_file_paths(path, timestamp):
         path_to_halloffame = None
 
     return path_to_logbook, path_to_halloffame
+
+def hof_data(path):
+
+    path_w_out_extension = os.path.splitext(path)[0]
+    data = []
+    print("pathwexte")
+    print(path_w_out_extension)
+    with shelve.open(path_w_out_extension, 'c') as fp: 
+        print(type(fp))
+        for i, d in enumerate(fp):
+            print("data:")
+            print(fp[str(i)])
+            data.append(fp[str(i)])
+    print("data")
+    print(data)
+    return data

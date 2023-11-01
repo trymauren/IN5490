@@ -98,4 +98,4 @@ def simulate_best( movement: np.array, repetitions : int, unity_interface) -> No
 	Returns:
 		None 
 	"""
-	evaluate_group([movement], unity_interface ,repetitions)
+	evaluate_group(movement, unity_interface ,repetitions)
