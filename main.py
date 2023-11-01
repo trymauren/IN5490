@@ -18,8 +18,6 @@ def main():
 	root = os.path.dirname(os.path.abspath(__file__))
 	executable_path = os.path.join(root,'executables/')
 	runs_path = os.path.join(root,'runs/')
-	print('Exe:', executable_path)
-	exit()
 	path_to_files = ''
 	plotted = False
 	halloffame = 0
