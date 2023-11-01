@@ -1,5 +1,5 @@
 ea_config = {
-'pop_size'			: 30,
+'pop_size'			: 60,
 'num_generations'	: 600,
 'std_dev'			: 3,
 'genome_len'		: 36,
@@ -7,6 +7,8 @@ ea_config = {
 'fitness_one_axis'	: True,
 'lower_start_limit'	: -10,
 'upper_start_limit'	: 10,
+'num_restarts'		: 10,
+'seed'				: 128,
 }
 
 interface_config = {
