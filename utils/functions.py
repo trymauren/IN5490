@@ -57,7 +57,7 @@ def make_plots_from_logbook(path):
         ax4.set_xlabel('Generation', fontsize=12)
         ax4.set_ylabel('Phase Shift', fontsize=12)
         ax4.grid(True)
-        plt.savefig('4xplot_timestamp.svg')
+        plt.savefig(f'4xplot_{timestamp}.svg')
     print(' -- Made plots')
 
 def get_executable(executable_path, pop_size=ea_config['pop_size']):
@@ -67,20 +67,17 @@ def get_executable(executable_path, pop_size=ea_config['pop_size']):
         Ret: Path to the correct executable
     """
     if platform == "linux" or platform == "linux2":
-        ret = executable_path + 'CHANGE_THIS'
+        ret = executable_path + 'exe_linux_test_m'
     elif platform == "darwin":
-        if pop_size > 30:
+        if pop_size <= 30:
             ret = executable_path + 'exe_mac_30.app' 
-        elif pop_size <= 30:
+        elif pop_size > 30:
             ret = executable_path + 'exe_mac_test_m.app' 
-
     elif platform == "win32":
         if pop_size > 30:
             ret = executable_path + 'exe_pc_30/UnityEnvironment.exe' 
         elif pop_size <= 30:
             ret = executable_path + 'exe_pc_test_m/UnityEnvironment.exe' 
-        
-
     return ret
 
 def dump_data(logbooks, halloffame, runs_path):
@@ -89,7 +86,7 @@ def dump_data(logbooks, halloffame, runs_path):
         Arg: List containing Logbook() objects, halloffame containing individual, path to runs dir
         Ret: None
     """
-    timestamp = datetime.today().strftime('%Y-%m-%d;%H:%M:%S')
+    timestamp = datetime.today().strftime('%Y_%m_%d_%H_%M_%S')
     logbook_path = os.path.join(runs_path, 'logbook_' + timestamp)
     halloffame_path = os.path.join(runs_path,'halloffame_' + timestamp)
     dump_logbook(logbooks, logbook_path)
