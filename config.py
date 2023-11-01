@@ -13,5 +13,5 @@ ea_config = {
 
 interface_config = {
 'no_graphics'		:False,
-'worker_id'			:2
+'worker_id'			:3
 }
