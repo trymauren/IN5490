@@ -83,11 +83,11 @@ def get_executable(executable_path, pop_size=ea_config['pop_size']):
             print('Chose 60 app')
     elif platform == "win32":
         if pop_size > 30:
-            ret = executable_path + 'exe_pc_30/UnityEnvironment.exe' 
+            ret = executable_path + 'exe_pc_60/UnityEnvironment.exe' 
         elif pop_size == 1:
-            ret = executable_path + 'exe_pc/UnityEnvironment.exe'
+            ret = executable_path + 'exe_pc_1/UnityEnvironment.exe'
         elif pop_size <= 30:
-            ret = executable_path + 'exe_pc_test_m/UnityEnvironment.exe' 
+            ret = executable_path + 'exe_pc_30/UnityEnvironment.exe' 
         
     return ret
 

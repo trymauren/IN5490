@@ -1,5 +1,5 @@
 ea_config = {
-'pop_size'			: 60,
+'pop_size'			: 30,
 'num_generations'	: 600,
 'std_dev'			: 3,
 'genome_len'		: 36,
