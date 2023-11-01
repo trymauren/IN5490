@@ -12,6 +12,7 @@ import os
 import sys
 import numpy as np
 from datetime import datetime
+from tkinter import filedialog as fd
 
 def main():
 
@@ -48,26 +49,29 @@ def main():
 
 		if 'plot' in sys.argv:
 			timestamp = input('Timestamp to plot: (enter to use latest)\n')
-			if len(timestamp) > 1:
-				path_to_files = functions.get_specific_file_paths(runs_path, timestamp)
+			if timestamp == 'n':
+				print('Pick logbook file')
+				path_to_files = fd.askopenfilename()
+				# print('Pick halloffame file')
+				# path_to_files[1] = fd.askopenfilename()
+				# functions.get_specific_file_paths(runs_path, timestamp)
 			else:
 				path_to_files = functions.get_newest_file_paths(runs_path)
-			functions.make_plots_from_logbook(path_to_files[0])
+			functions.make_plots_from_logbook(path_to_files)
 			# functions.make_plots_from_halloffame(path_to_files[1])
 		
 		if 'sim_best' in sys.argv:
 			pass
 
 	if 'sim_best' in sys.argv:
-		
-		timestamp = input('Timestamp to simulate: (enter to use latest)\n')
-		if len(timestamp) > 1:
-			path_to_files = functions.get_specific_file_paths(runs_path, timestamp)
+		timestamp = input('Timestamp to simulate: (enter to use latest), n to navigate\n')
+		if timestamp == 'n':
+			path_to_file = fd.askopenfilename()
 		else:
-			path_to_files = functions.get_newest_file_paths(runs_path)
+			path_to_file = functions.get_newest_file_paths(runs_path)
 		print("path to files is:")
-		print(path_to_files[1])
-		halloffame = functions.hof_data(path_to_files[1])
+		
+		halloffame = functions.hof_data(path_to_file)
    
 		exe_path = functions.get_executable(executable_path, 1)
 		unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, **interface_config)
