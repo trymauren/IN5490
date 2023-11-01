@@ -1,8 +1,10 @@
-import numpy as np
-import time
-from tqdm import tqdm
+# Project
 from config import ea_config
 
+# Python modules
+import numpy as np
+from tqdm import tqdm
+import time 
 def evaluate_population(population, unity_interface) -> None:
 	"""
 	Splits the population in groups, passing them to unity for evaluation.
@@ -15,7 +17,6 @@ def evaluate_population(population, unity_interface) -> None:
 	for i in range(0, len(population), num_agents):
 		subset = population[i:i+num_agents]
 		fitnesses[i:i+num_agents] = evaluate_group(subset, unity_interface)
-
 	return fitnesses
 
 def evaluate_group(group, unity_interface, repetitions=ea_config['num_mov_repeat']) -> tuple:
@@ -24,18 +25,22 @@ def evaluate_group(group, unity_interface, repetitions=ea_config['num_mov_repeat
 		Arg: individual
 		Ret: list containing tuples containing fitness of an individual
 	"""
-	all_movmets = []
+	all_movements = []
 	for i in range(len(group)):
 		movement = compute_movement(group[i])
-		movement_rep = repeat_movment(movement, repetitions)
-		all_movmets.append(movement_rep)
+		movement_rep = repeat_movement(movement, repetitions)
+		all_movements.append(movement_rep)
 
-	coordinates = unity_interface.send_actions_to_unity(all_movmets)
+	coordinates = unity_interface.send_actions_to_unity(all_movements)
 
 	fitness = []
 	for j in range(len(coordinates)):
-		fit = max(coordinates[j][2], 0)
-		# fit = np.sqrt(coordinates[j][0]**2 + coordinates[j][2]**2)
+		
+		if ea_config['fitness_one_axis']:
+			fit = max(coordinates[j][2], 0) # rewards walking far in one direction
+		else:
+			fit = np.sqrt(coordinates[j][0]**2 + coordinates[j][2]**2) # rewards walking far
+
 		fitness.append((fit,)) # must add tuple to list! why: https://deap.readthedocs.io/en/master/overview.html
 
 	return fitness 
@@ -57,10 +62,10 @@ def compute_movement(individual, num_move_directions=12) -> np.array(np.array):
 
 	return np.asarray(movement)
 
-def repeat_movment(movement, repetitions, num_move_directions=12, num_movements=10):
-	"""Repeat the movment from a given list [1,2,3]*2 --> [1,2,3,1,2,3] 
+def repeat_movement(movement, repetitions, num_move_directions=12, num_movements=10):
+	"""Repeat the movement from a given list [1,2,3]*2 --> [1,2,3,1,2,3] 
 	Args:
-		movement (np.array): movment to repeat
+		movement (np.array): movement to repeat
 		repetitions (int): num rep
 		num_move_directions (int, optional): _description_. Defaults to 12.
 		num_movements (int, optional): _description_. Defaults to 10.
@@ -83,14 +88,14 @@ def compute_sin(A=1, f=2, phase=0) -> np.array:
 	sinusoid = A*np.sin(t * f + phase)
 	return sinusoid
 
-def simulate_best( movment: np.array, repetitions : int, unity_interface) -> None:
+def simulate_best( movement: np.array, repetitions : int, unity_interface) -> None:
 	"""Simulate a singe individ with one crwaler 
 
 	Args:
-		movment (np.array): movment for the crawler (one individ from a population) 
+		movement (np.array): movement for the crawler (one individ from a population) 
 		repetitions (int): how many steps to do/ how many repititions of the sampled list
 		unity_interface (unity): unity interface 
 	Returns:
 		None 
 	"""
-	evaluate_group([movment], unity_interface ,repetitions)
+	evaluate_group([movement], unity_interface ,repetitions)

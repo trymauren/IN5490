@@ -44,16 +44,18 @@ from deap import tools
 from config import ea_config
 # Problem size (genome length)
 
-
+import time
 
 def train(unity_interface, verbose=True):
 
     lambda_ = ea_config['pop_size']
     sigma = ea_config['std_dev']
     N = ea_config['genome_len']
+    lower_start_limit = ea_config['lower_start_limit']
+    upper_start_limit = ea_config['upper_start_limit']
 
-    creator.create('FitnessMin', base.Fitness, weights=(1.0,))
-    creator.create('Individual', list, fitness=creator.FitnessMin)
+    creator.create('FitnessMax', base.Fitness, weights=(1.0,))
+    creator.create('Individual', list, fitness=creator.FitnessMax)
 
     np.random.seed(128)
 
@@ -70,7 +72,7 @@ def train(unity_interface, verbose=True):
     def amplitude(ind):
         return np.mean(np.array([ind[i] for i in range(0,len(ind),3)]))
     def frequency(ind):
-        return np.mean(np.array([ind[i] for i in range(1,len(ind),3)]))
+        return np.abs(np.mean(np.array([ind[i] for i in range(1,len(ind),3)])))
     def phase_shift(ind):
         return np.mean(np.array([ind[i] for i in range(2,len(ind),3)]))
 
@@ -89,7 +91,12 @@ def train(unity_interface, verbose=True):
 
     logbooks = list()
 
-    strategy = cma.Strategy(centroid=np.random.uniform(-1, 1, N), lambda_=lambda_, sigma=sigma) # 
+    strategy = cma.Strategy(
+                            centroid=np.random.uniform(lower_start_limit, upper_start_limit, N),
+                            lambda_=lambda_,
+                            sigma=sigma
+                            )
+
     toolbox.register('generate', strategy.generate, creator.Individual)
     toolbox.register('update', strategy.update)
 
@@ -100,9 +107,8 @@ def train(unity_interface, verbose=True):
     logbooks[-1].chapters['frequency'].header = 'std', 'min', 'avg', 'max'
     logbooks[-1].chapters['phase_shift'].header = 'std', 'min', 'avg', 'max'
 
-    MAXITER = 100
     i = 0
-    while i < MAXITER:
+    while i < ea_config['num_generations']:
         # Generate a new population
         population = toolbox.generate()
 
