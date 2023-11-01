@@ -74,10 +74,13 @@ def get_executable(executable_path, pop_size=ea_config['pop_size']):
     elif platform == "darwin":
         if pop_size == 1:
             ret = executable_path + 'exe_mac.app'
+            print('Chose 1 app')
         elif pop_size <= 30:
             ret = executable_path + 'exe_mac_30.app' 
+            print('Chose 30 app')
         elif pop_size > 30:
             ret = executable_path + 'exe_mac_test_m.app' 
+            print('Chose 60 app')
     elif platform == "win32":
         if pop_size > 30:
             ret = executable_path + 'exe_pc_30/UnityEnvironment.exe' 
@@ -121,7 +124,6 @@ def dump_halloffame(data, path):
     with shelve.open(path, 'c') as fp: 
         for i, d in enumerate(data):
             fp[str(i)] = d
-            print(d)
     print(' -- Dumped halloffame')
 
 def get_newest_file_paths(path_to_dir):
