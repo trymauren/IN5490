@@ -59,6 +59,11 @@ def main():
 			pass
 
 	if 'sim_best' in sys.argv:
+<<<<<<< HEAD
+		if not halloffame:
+			halloffame = functions.get_newest_file_paths()
+		fitness_evaluation.simulate_best(halloffame, unity_interface, 500)
+=======
 		timestamp = input('Timestamp to simulate: (enter to use latest)\n')
 		if len(timestamp) > 1:
 			path_to_files = functions.get_specific_file_paths(runs_path, timestamp)
@@ -72,6 +77,7 @@ def main():
 		unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, **interface_config)
    
 		fitness_evaluation.simulate_best(halloffame, 500, unity_interface)
+>>>>>>> 0f7d4f76df815f63d377e44355ea586a7a28dad6
 
 if __name__ == "__main__":
     main()
