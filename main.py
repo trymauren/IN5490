@@ -29,7 +29,7 @@ def main():
 		unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, **interface_config)
 
 		# Run EA
-		logbooks, halloffame = cma_es_deap.train(unity_interface)
+		logbooks, halloffame = cma_es_deap.train(unity_interface, runs_path)
 		print("hall of fame:")
 		print(halloffame)
 		# Stop simulation environmentsim
