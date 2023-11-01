@@ -18,8 +18,8 @@ def fetch_timestamp():
     return datetime.today().strftime('%Y_%m_%d_%H_%M_%S')
 
 def make_plots_from_logbook(path):
-    timestamp = fetch_timestamp()
     path_w_out_extension = os.path.splitext(path)[0]
+    file_name = path_w_out_extension[path_w_out_extension.find('_'):][1:]
     logbooks = []
     with shelve.open(path_w_out_extension, 'c') as fp: 
         for i, d in enumerate(fp):
@@ -60,7 +60,7 @@ def make_plots_from_logbook(path):
         ax4.set_xlabel('Generation', fontsize=12)
         ax4.set_ylabel('Phase Shift', fontsize=12)
         ax4.grid(True)
-        plt.savefig(f'4xplot_{timestamp}.svg')
+        plt.savefig(f'4xplot_{file_name}.pdf',dpi=300)
     print(' -- Made plots')
 
 def get_executable(executable_path, pop_size=ea_config['pop_size']):
