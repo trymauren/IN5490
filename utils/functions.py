@@ -73,21 +73,24 @@ def get_executable(executable_path, pop_size=ea_config['pop_size']):
         ret = executable_path + 'exe_linux_test_m'
     elif platform == "darwin":
         if pop_size == 1:
-            ret = executable_path + 'exe_mac.app'
-            print('Chose 1 app')
+            ret = executable_path + 'exe_mac_1.app'
+            print('-- Training with 1 agents')
         elif pop_size <= 30:
             ret = executable_path + 'exe_mac_30.app' 
-            print('Chose 30 app')
+            print('-- Training with 30 agents')
         elif pop_size > 30:
-            ret = executable_path + 'exe_mac_test_m.app' 
-            print('Chose 60 app')
+            ret = executable_path + 'exe_mac_60.app' 
+            print('-- Training with 60 agents')
     elif platform == "win32":
-        if pop_size > 30:
-            ret = executable_path + 'exe_pc_60/UnityEnvironment.exe' 
-        elif pop_size == 1:
+        if pop_size == 1:
             ret = executable_path + 'exe_pc_1/UnityEnvironment.exe'
+            print('-- Training with 1 agents') 
         elif pop_size <= 30:
-            ret = executable_path + 'exe_pc_30/UnityEnvironment.exe' 
+            ret = executable_path + 'exe_pc_30/UnityEnvironment.exe'
+            print('-- Training with 30 agents')
+        if pop_size > 30:
+            ret = executable_path + 'exe_pc_60/UnityEnvironment.exe'
+            print('-- Training with 60 agents') 
         
     return ret
 
