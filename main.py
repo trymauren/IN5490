@@ -61,7 +61,7 @@ def main():
 
 	if 'sim_best' in sys.argv:
 		if not halloffame:
-			halloffame = get_newest_file_paths()
+			halloffame = functions.get_newest_file_paths()
 		fitness_evaluation.simulate_best(halloffame, unity_interface, 500)
 
 if __name__ == "__main__":
