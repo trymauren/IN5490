@@ -35,7 +35,8 @@ class UnityInterface():
         positions = []
         # Looping over number of movements to evaluate
 
-        for i in range(20):
+        #so the crwaler falls down to it start position 
+        for i in range(30):
             self.env.step()
 
         for i in range(len(actions[0][0])): # for 10 or 200
