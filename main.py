@@ -1,29 +1,34 @@
-import pickle
-from datetime import datetime
+# Project
 from utils import basic_deap
 from utils import cma_es_deap
-from config import ea_config, interface_config
 from utils import functions
 from utils import unity_stuff
 from utils import fitness_evaluation
-import numpy as np
+from config import ea_config
+from config import interface_config
 
+# Python modules
 import os
 import sys
-
-# Set path for data
-root = os.path.dirname(os.path.abspath(__file__))
-executable_path = os.path.join(root,'../executables/')
-runs_path = os.path.join(root,'runs/')
+import numpy as np
+from datetime import datetime
 
 def main():
 
+	root = os.path.dirname(os.path.abspath(__file__))
+	executable_path = os.path.join(root,'executables/')
+	runs_path = os.path.join(root,'runs/')
+	print('Exe:', executable_path)
+	exit()
 	path_to_files = ''
 	plotted = False
+	halloffame = 0
+
 	if 'train' in sys.argv:
 
 		# Create the simulation environment
 		exe_path = functions.get_executable(executable_path, ea_config['pop_size'])
+		print(exe_path)
 		unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, **interface_config)
 
 		# Run EA
@@ -56,7 +61,9 @@ def main():
 		if 'sim_best' in sys.argv:
 			pass
 
-	if 'view_best' in sys.argv:
+	if 'sim_best' in sys.argv:
+		if not halloffame:
+			halloffame = get_newest_file_paths()
 		fitness_evaluation.simulate_best(halloffame, unity_interface, 500)
 
 if __name__ == "__main__":
