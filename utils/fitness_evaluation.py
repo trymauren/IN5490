@@ -36,7 +36,6 @@ def evaluate_group(group, unity_interface, repetitions=ea_config['num_mov_repeat
 
 	fitness = []
 	for j in range(len(coordinates)):
-		
 		if ea_config['fitness_one_axis']:
 			fit = max(coordinates[j][2], 0) # rewards walking far in one direction
 		else:
@@ -97,14 +96,14 @@ def compute_sin(A=1, phase=0, f=2) -> np.array:
 	sinusoid = A*np.sin(t * f + phase)
 	return sinusoid
 
-def simulate_best(movement: np.array, repetitions : int, unity_interface) -> None:
+def simulate_best(individual: np.array, repetitions : int, unity_interface) -> None:
 	"""Simulate a singe individ with one crwaler 
 
 	Args:
-		movement (np.array): movement for the crawler (one individ from a population) 
+		individual (np.array): individual for the crawler (one individ from a population) 
 		repetitions (int): how many steps to do/ how many repititions of the sampled list
 		unity_interface (unity): unity interface 
 	Returns:
 		None 
 	"""
-	evaluate_group(movement, unity_interface ,repetitions)
+	evaluate_group(individual, unity_interface, repetitions)
