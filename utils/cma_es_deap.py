@@ -194,13 +194,11 @@ def train(unity_interface, runs_path, verbose=True):
     lambda0 = 4 + int(3 * np.log(N)) # population size - dynamic, dependent on individual size
     # lambda0 = ea_config['pop_size'] # population size - static
     regime = 1
-
+    
     def signal_handler(signal, frame):
-        quit = input('Really want to quit? y/n\n')
-        if quit == 'y':
-            functions.dump_data(logbooks, halloffame, runs_path)
-            exit()
- 
+        functions.dump_data(logbooks, halloffame, runs_path)
+        exit()
+
     import signal
     signal.signal(signal.SIGINT, signal_handler)
 

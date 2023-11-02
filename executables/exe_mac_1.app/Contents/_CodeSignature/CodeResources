@@ -6,11 +6,15 @@
 	<dict>
 		<key>Resources/Data/Managed/Assembly-CSharp.dll</key>
 		<data>
-		4DE5RaqfU91xDz2NTu/YGwXS7sk=
+		Ihi9uJX5Vh7DGIlAo7vtXbNPVKc=
 		</data>
 		<key>Resources/Data/Managed/Autodesk.Fbx.dll</key>
 		<data>
 		R4oO8mG4uc+wLo0sfjj9MjGioEA=
+		</data>
+		<key>Resources/Data/Managed/Cinemachine.dll</key>
+		<data>
+		FGkbX+wjlZJHXxMgWo/luepu4uE=
 		</data>
 		<key>Resources/Data/Managed/FbxBuildTestAssets.dll</key>
 		<data>
@@ -546,11 +550,11 @@
 		</data>
 		<key>Resources/Data/RuntimeInitializeOnLoads.json</key>
 		<data>
-		asnqe0njLIsZoosbPK0xrVfxqa0=
+		Cbi3B5cnRCajljTXYgUhhG281ho=
 		</data>
 		<key>Resources/Data/ScriptingAssemblies.json</key>
 		<data>
-		S7JaNYTUaF6Vzdpocl090TyqPKU=
+		gleXzZEIx4l5cADpfk4/jxFXb38=
 		</data>
 		<key>Resources/Data/StreamingAssets/EntityScenes/scene_info.bin</key>
 		<data>
@@ -562,15 +566,15 @@
 		</data>
 		<key>Resources/Data/boot.config</key>
 		<data>
-		y6IMBjFq90rPcvNeI3U13I/yhN0=
+		KroN/SjNda1FxbPfpix0V3zTGag=
 		</data>
 		<key>Resources/Data/globalgamemanagers</key>
 		<data>
-		z3+H4eAwmXDu9A9rfBI6y/gOD3w=
+		9/1LpiNgKWBy1hbyRSwxXiULuM4=
 		</data>
 		<key>Resources/Data/globalgamemanagers.assets</key>
 		<data>
-		EhZUz6v+Q8d4FyT+1Y2gZLz2MxE=
+		UYvYct4vBYYdPLOGbpFngWZacAg=
 		</data>
 		<key>Resources/Data/globalgamemanagers.assets.resS</key>
 		<data>
@@ -578,7 +582,7 @@
 		</data>
 		<key>Resources/Data/level0</key>
 		<data>
-		EakAIqGQNi0nW7WqPvVdxLowaDc=
+		2IIen0wwaBKfNwR7BRK7m6XZmL0=
 		</data>
 		<key>Resources/Data/level0.resS</key>
 		<data>
@@ -586,11 +590,11 @@
 		</data>
 		<key>Resources/Data/resources.assets</key>
 		<data>
-		WtW9Oo7a1S36WTkRuJVfty4on8w=
+		1eiE4RPV/w9a0k3NaxyUx3KmsTw=
 		</data>
 		<key>Resources/Data/sharedassets0.assets</key>
 		<data>
-		MazN8ydwvyOY/WYPfs3qm0Ee30s=
+		WPqcOQajlB3zyJyfy0PAABfOsnI=
 		</data>
 		<key>Resources/DefaultPreferences.plist</key>
 		<data>
@@ -615,10 +619,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			oawp78jr0TJbTAd+O2sCJeAxPOw=
+			IHS3DLXp6cdPRQ0G3sSPO9RIVxA=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"a1ac29efc8ebd1325b4c077e3b6b0225e0313cec"</string>
+			<string>cdhash H"2074b70cb5e9e9c74f450d06dec48f3bd4485710" or cdhash H"af38a13a0a4b636b63045e4c3dc24ee3176c225a"</string>
 		</dict>
 		<key>Frameworks/libMonoPosixHelper.dylib</key>
 		<dict>
@@ -627,7 +631,7 @@
 			NRiwi8Nu8cNb+BY8+jtS680dR78=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"3518b08bc36ef1c35bf8163cfa3b52ebcd1d47bf"</string>
+			<string>cdhash H"3518b08bc36ef1c35bf8163cfa3b52ebcd1d47bf" or cdhash H"776aba9bfe0f1921709dd4bc5a75b9811df7bbb1"</string>
 		</dict>
 		<key>Frameworks/libmono-native.dylib</key>
 		<dict>
@@ -636,7 +640,7 @@
 			bxIbFWPrUCZC8xyeMKf8M+uWjdw=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"6f121b1563eb502642f31c9e30a7fc33eb968ddc"</string>
+			<string>cdhash H"6f121b1563eb502642f31c9e30a7fc33eb968ddc" or cdhash H"325d3d921bfaf847071d5310fcbede521c8d93d3"</string>
 		</dict>
 		<key>Frameworks/libmonobdwgc-2.0.dylib</key>
 		<dict>
@@ -645,7 +649,7 @@
 			qaJ0lZ34kWNsmEJ5/xB58pl0FN4=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"a9a274959df891636c984279ff1079f2997414de"</string>
+			<string>cdhash H"a9a274959df891636c984279ff1079f2997414de" or cdhash H"e3feade4032d53ae9c2101cacab4aa828e4d8e1f"</string>
 		</dict>
 		<key>MonoBleedingEdge/etc/mono/2.0/Browsers/Compat.browser</key>
 		<dict>
@@ -777,10 +781,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			2bia6m3VELMJyI5nlcJS9zrqjX8=
+			TuiBe2fJbC5Wh2WVinoaGPHF+1E=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"d9b89aea6dd510b309c88e6795c252f73aea8d7f"</string>
+			<string>cdhash H"4ee8817b67c96c2e568765958a7a1a18f1c5fb51"</string>
 		</dict>
 		<key>PlugIns/libgrpc_csharp_ext.x64.bundle</key>
 		<dict>
@@ -795,7 +799,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			LDEKZx2VAYCyjj4XvqE39PJdwHNsvh5dFMgB52NV9Y0=
+			dWVABBrYpXyKbNdU5r0XOa7UygH6uqtVV/Si4gvo12A=
 			</data>
 		</dict>
 		<key>Resources/Data/Managed/Autodesk.Fbx.dll</key>
@@ -803,6 +807,13 @@
 			<key>hash2</key>
 			<data>
 			NtF6tlHa2z7Duf97rDiMSXhruyGsBQs1wdAPBq0T54I=
+			</data>
+		</dict>
+		<key>Resources/Data/Managed/Cinemachine.dll</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			D2pCsTE2e2gdllXmjI21toIvC4oR54OaXn29ChcqU70=
 			</data>
 		</dict>
 		<key>Resources/Data/Managed/FbxBuildTestAssets.dll</key>
@@ -1740,14 +1751,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			KZrMMKRauvjyibyErvY/Hw42zA7v99n3KTCrasVFRM8=
+			jis4iDe5pEkWcGPCE2oefqKz+XGe728gluDAlV+jz+M=
 			</data>
 		</dict>
 		<key>Resources/Data/ScriptingAssemblies.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			jABDgAITX4QHkjxEsvsslN9d9Y9Wmv6jIFfjoCzLTK0=
+			JtKYqRUyQWwvF6EFZbMEPfahypej5tf3LHP58gpHQWc=
 			</data>
 		</dict>
 		<key>Resources/Data/StreamingAssets/EntityScenes/scene_info.bin</key>
@@ -1768,21 +1779,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			YYQTU5KK0/C9nU9lC8L4vre5nnl0QorjsxX2BtWK9Wo=
+			PVGzeYIFUAsA1Nf5ZV4dlMBcAlROo+hXPdAFcKjiuRw=
 			</data>
 		</dict>
 		<key>Resources/Data/globalgamemanagers</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Llt7a80+OBn2AyND0zpFpqdAi0O5EgOKXw2ul9Zvrx4=
+			jVez++9b/I++oPgB99hDA9Tjvz304lUzfSn2spFF0hw=
 			</data>
 		</dict>
 		<key>Resources/Data/globalgamemanagers.assets</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			DOCJnv+0sEnXzdLbvjZplNgPgJn3/Q0eTOb58JtLcxg=
+			Luxw9oCbvd6lLhau7kks6ggQpTEa/u8SJed7YcMEvO4=
 			</data>
 		</dict>
 		<key>Resources/Data/globalgamemanagers.assets.resS</key>
@@ -1796,7 +1807,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			OxQyyjAnWpr4fT2LUj3FzTl134HLwsDLHTz41jWaEl4=
+			qfJ7xw6R58Wh8HBt+UGQC0loVLyuhgKHJnEAx6naaoU=
 			</data>
 		</dict>
 		<key>Resources/Data/level0.resS</key>
@@ -1810,14 +1821,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			0DaOwV5Rl7LJcfA6NpqWnE/vNO8ma1zdOd62Oo1OtbQ=
+			CpD0vHsfo1WLTard/i/cjnP1OgZdssc4GCOGFBQkEl8=
 			</data>
 		</dict>
 		<key>Resources/Data/sharedassets0.assets</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			z/IWowQrR3IrB+NgAobn15UI5ZLV41u0M1Ci3uZQQFY=
+			iSZLe31aqBuigNcCd4PMBLmYjBbGlZL7C1CZKvbSVW4=
 			</data>
 		</dict>
 		<key>Resources/DefaultPreferences.plist</key>
