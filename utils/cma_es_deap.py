@@ -8,7 +8,7 @@
 #    DEAP is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#    GNU Lesser General Public License for more details.
+#    GNU Lesser General Public License fo
 #
 #    You should have received a copy of the GNU Lesser General Public
 #    License along with DEAP. If not, see <http://www.gnu.org/licenses/>.
@@ -46,102 +46,110 @@ from config import ea_config
 # Problem size (genome length)
 
 
-# def train(unity_interface, verbose=True):
+def train_without_restarts(unity_interface, runs_path, verbose=True):
 
-#     lambda_ = ea_config['pop_size']
-#     sigma = ea_config['std_dev']
-#     N = ea_config['genome_len']
-#     lower_start_limit = ea_config['lower_start_limit']
-#     upper_start_limit = ea_config['upper_start_limit']
+    lambda_ = ea_config['pop_size']
+    sigma = ea_config['std_dev']
+    N = ea_config['genome_len']
+    lower_start_limit = ea_config['lower_start_limit']
+    upper_start_limit = ea_config['upper_start_limit']
 
-#     creator.create('FitnessMax', base.Fitness, weights=(1.0,))
-#     creator.create('Individual', list, fitness=creator.FitnessMax)
+    creator.create('FitnessMax', base.Fitness, weights=(1.0,))
+    creator.create('Individual', list, fitness=creator.FitnessMax)
 
-#     np.random.seed(128)
+    np.random.seed(128)
 
-#     toolbox = base.Toolbox()
+    toolbox = base.Toolbox()
 
-#     # Register custom fitness evaluation function
-#     toolbox.register('evaluate', fitness_evaluation.evaluate_population)
+    # Register custom fitness evaluation function
+    toolbox.register('evaluate', fitness_evaluation.evaluate_population)
 
-#     # Create the hall of fame (the container storing the best individuals)
-#     halloffame = tools.HallOfFame(1)
+    # Create the hall of fame (the container storing the best individuals)
+    halloffame = tools.HallOfFame(1)
 
 
-#     # Create the statistics functions
-#     def amplitude(ind):
-#         return np.mean(np.array([ind[i] for i in range(0,len(ind),3)]))
-#     def frequency(ind):
-#         return np.abs(np.mean(np.array([ind[i] for i in range(1,len(ind),3)])))
-#     def phase_shift(ind):
-#         return np.mean(np.array([ind[i] for i in range(2,len(ind),3)]))
+    # Create the statistics functions
+    def amplitude(ind):
+        return np.mean(np.array([ind[i] for i in range(0,len(ind),3)]))
+    def frequency(ind):
+        return np.abs(np.mean(np.array([ind[i] for i in range(1,len(ind),3)])))
+    def phase_shift(ind):
+        return np.mean(np.array([ind[i] for i in range(2,len(ind),3)]))
 
-#     stats_fitness       = tools.Statistics(lambda ind: ind.fitness.values)
-#     stats_amplitude     = tools.Statistics(amplitude)
-#     stats_frequency     = tools.Statistics(frequency)
-#     stats_phase_shift   = tools.Statistics(phase_shift)
+    stats_fitness       = tools.Statistics(lambda ind: ind.fitness.values)
+    stats_amplitude     = tools.Statistics(amplitude)
+    stats_frequency     = tools.Statistics(frequency)
+    stats_phase_shift   = tools.Statistics(phase_shift)
     
-#     # Register and create statistics functions
-#     stats = tools.MultiStatistics(  fitness=stats_fitness, amplitude=stats_amplitude, 
-#                                     frequency=stats_frequency, phase_shift=stats_phase_shift)
-#     stats.register('avg', lambda x: round(np.mean(x), 4))
-#     stats.register('std', lambda x: round(np.std(x), 4))
-#     stats.register('min', lambda x: round(np.min(x), 4))
-#     stats.register('max', lambda x: round(np.max(x), 4))
-
-#     logbooks = list()
-
-#     strategy = cma.Strategy(
-#                             centroid=np.random.uniform(lower_start_limit, upper_start_limit, N),
-#                             lambda_=lambda_,
-#                             sigma=sigma
-#                             )
-
-#     toolbox.register('generate', strategy.generate, creator.Individual)
-#     toolbox.register('update', strategy.update)
-
-#     logbooks.append(tools.Logbook())
-#     logbooks[-1].header = 'gen', 'evals', 'fitness', 'amplitude', 'frequency', 'phase_shift'
-#     logbooks[-1].chapters['fitness'].header = 'std', 'min', 'avg', 'max'
-#     logbooks[-1].chapters['amplitude'].header = 'std', 'min', 'avg', 'max'
-#     logbooks[-1].chapters['frequency'].header = 'std', 'min', 'avg', 'max'
-#     logbooks[-1].chapters['phase_shift'].header = 'std', 'min', 'avg', 'max'
-
-#     i = 0
-#     while i < ea_config['num_generations']:
-#         # Generate a new population
-#         population = toolbox.generate()
-
-#         # Evaluate the individuals:
-#         # The following commented out line is how DEAP suggests to calculate fitness
-#         # fitnesses = toolbox.map(toolbox.evaluate, population, unity_interface) # fuck this
-
-#         # Here, it is done with the following to make evaluation parallell
-#         # (evaluate many individuals) in Unity.
-#         fitnesses = toolbox.evaluate(population, unity_interface) # very nice
-
-#         # Assign the computed fitness to individuals
-#         for ind, fit in zip(population, fitnesses):
-#             ind.fitness.values = fit
-
-#         # update hall of fame with current populations best k individuals
-#         halloffame.update(population)
-
-#         # This creates stats of current population using the stats.register('') above
-#         record = stats.compile(population)
-#         logbooks[-1].record(gen=i, evals=lambda_, **record)
-
-#         if verbose:
-#             print(logbooks[-1].stream)
-
-#         # Update the strategy with the evaluated individuals
-#         toolbox.update(population)
-#         i += 1
-
-#     return logbooks, halloffame
+    # Register and create statistics functions
+    stats = tools.MultiStatistics(  fitness=stats_fitness, amplitude=stats_amplitude, 
+                                    frequency=stats_frequency, phase_shift=stats_phase_shift)
+    
+    stats.register('avg', lambda x: np.mean(x))
+    stats.register('std', lambda x: np.std(x))
+    stats.register('min', lambda x: np.min(x))
+    stats.register('max', lambda x: np.max(x))
 
 
-def train(unity_interface, runs_path, verbose=True):
+    strategy = cma.Strategy(
+                            centroid=np.random.uniform(lower_start_limit, upper_start_limit, N),
+                            lambda_=lambda_,
+                            sigma=sigma
+                            )
+
+    toolbox.register('generate', strategy.generate, creator.Individual)
+    toolbox.register('update', strategy.update)
+
+    logbooks = list()
+    logbooks.append(tools.Logbook())
+    logbooks[-1].header = 'gen', 'evals', 'fitness', 'amplitude', 'frequency', 'phase_shift'
+    logbooks[-1].chapters['fitness'].header = 'std', 'min', 'avg', 'max'
+    logbooks[-1].chapters['amplitude'].header = 'std', 'min', 'avg', 'max'
+    logbooks[-1].chapters['frequency'].header = 'std', 'min', 'avg', 'max'
+    logbooks[-1].chapters['phase_shift'].header = 'std', 'min', 'avg', 'max'
+
+    def signal_handler(signal, frame):
+        functions.dump_data(logbooks, halloffame, runs_path)
+        exit()
+
+    import signal
+    signal.signal(signal.SIGINT, signal_handler)
+
+    i = 0
+    while i < ea_config['num_generations']:
+        # Generate a new population
+        population = toolbox.generate()
+
+        # Evaluate the individuals:
+        # The following commented out line is how DEAP suggests to calculate fitness
+        # fitnesses = toolbox.map(toolbox.evaluate, population, unity_interface) # fuck this
+
+        # Here, it is done with the following to make evaluation parallell
+        # (evaluate many individuals) in Unity.
+        fitnesses = toolbox.evaluate(population, unity_interface) # very nice
+
+        # Assign the computed fitness to individuals
+        for ind, fit in zip(population, fitnesses):
+            ind.fitness.values = fit
+
+        # update hall of fame with current populations best k individuals
+        halloffame.update(population)
+
+        # This creates stats of current population using the stats.register('') above
+        record = stats.compile(population)
+        logbooks[-1].record(gen=i, evals=lambda_, **record)
+
+        if verbose:
+            print(logbooks[-1].stream)
+
+        # Update the strategy with the evaluated individuals
+        toolbox.update(population)
+        i += 1
+
+    return logbooks, halloffame
+
+
+def train_with_restarts(unity_interface, runs_path, verbose=True):
 
     np.random.seed(ea_config['seed'])
 
@@ -161,13 +169,10 @@ def train(unity_interface, runs_path, verbose=True):
     halloffame = tools.HallOfFame(1)
 
     def amplitude(ind):
-        print(ind)
         return np.mean(np.array([ind[i] for i in range(0,len(ind),3)]))
     def frequency(ind):
-        print(ind)
         return np.mean(np.array([ind[i] for i in range(1,len(ind),3)]))
     def phase_shift(ind):
-        print(ind)
         return np.mean(np.array([ind[i] for i in range(2,len(ind),3)]))
 
     # Create the statistics functions
@@ -275,7 +280,7 @@ def train(unity_interface, runs_path, verbose=True):
 
             # Here, it is done with the following to make evaluation parallell
             # (evaluate many individuals) in Unity.
-            print(population)
+
             fitnesses = toolbox.evaluate(population, unity_interface) # very nice
 
             # Assign the computed fitness to individuals
