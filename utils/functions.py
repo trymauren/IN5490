@@ -123,18 +123,18 @@ def train(runs_path, executable_path):
     unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, **interface_config)
 
     # Run EA
-    if ea_config['ea_type'] == 'basic_deap':
+    if ea_config['ea_type'] == 'basic':
         logbooks, halloffame = basic_deap.train(unity_interface, runs_path)
-    elif ea_config['ea_type'] == 'cma_es_deap_without_restarts':
-        logbooks, halloffame = cma_es_deap.train_without_restarts(unity_interface, runs_path)
-    elif ea_config['ea_type'] == 'cma_es_deap_with_restarts':
-        logbooks, halloffame = cma_es_deap.train_with_restarts(unity_interface, runs_path)
+    elif ea_config['ea_type'] == 'cma_es':
+        logbooks, halloffame = cma_es_deap.train_normal(unity_interface, runs_path)
+    elif ea_config['ea_type'] == 'cma_es_bipop':
+        logbooks, halloffame = cma_es_deap.train_bipop(unity_interface, runs_path)
     else:
         print(f' -- Invalid ea_type in config: {ea_config["ea_type"]}')
+        unity_interface.stop_env()
         exit()
-    # Stop simulation environmentsim
+    
     unity_interface.stop_env()
-
     # Write results to file
     dump_data(logbooks, halloffame, runs_path)
     
