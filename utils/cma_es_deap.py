@@ -46,13 +46,20 @@ from config import ea_config
 # Problem size (genome length)
 
 
-def train_without_restarts(unity_interface, runs_path, verbose=True):
-
+def train_normal(unity_interface, runs_path, verbose=True):
+    print(' -- Strategy: cma-es')
     lambda_ = ea_config['pop_size']
     sigma = ea_config['std_dev']
     N = ea_config['genome_len']
     lower_start_limit = ea_config['lower_start_limit']
     upper_start_limit = ea_config['upper_start_limit']
+
+    def signal_handler(signal, frame):
+        functions.dump_data(logbooks, halloffame, runs_path)
+        exit()
+
+    import signal
+    signal.signal(signal.SIGINT, signal_handler)
 
     creator.create('FitnessMax', base.Fitness, weights=(1.0,))
     creator.create('Individual', list, fitness=creator.FitnessMax)
@@ -101,56 +108,51 @@ def train_without_restarts(unity_interface, runs_path, verbose=True):
     toolbox.register('update', strategy.update)
 
     logbooks = list()
-    logbooks.append(tools.Logbook())
-    logbooks[-1].header = 'gen', 'evals', 'fitness', 'amplitude', 'frequency', 'phase_shift'
-    logbooks[-1].chapters['fitness'].header = 'std', 'min', 'avg', 'max'
-    logbooks[-1].chapters['amplitude'].header = 'std', 'min', 'avg', 'max'
-    logbooks[-1].chapters['frequency'].header = 'std', 'min', 'avg', 'max'
-    logbooks[-1].chapters['phase_shift'].header = 'std', 'min', 'avg', 'max'
 
-    def signal_handler(signal, frame):
-        functions.dump_data(logbooks, halloffame, runs_path)
-        exit()
+    for r in range(ea_config['num_restarts']):
 
-    import signal
-    signal.signal(signal.SIGINT, signal_handler)
+        logbooks.append(tools.Logbook())
+        logbooks[-1].header = 'gen', 'run', 'fitness', 'amplitude', 'frequency', 'phase_shift'
+        logbooks[-1].chapters['fitness'].header = 'std', 'min', 'avg', 'max'
+        logbooks[-1].chapters['amplitude'].header = 'std', 'min', 'avg', 'max'
+        logbooks[-1].chapters['frequency'].header = 'std', 'min', 'avg', 'max'
+        logbooks[-1].chapters['phase_shift'].header = 'std', 'min', 'avg', 'max'
 
-    i = 0
-    while i < ea_config['num_generations']:
-        # Generate a new population
-        population = toolbox.generate()
+        for g in range(ea_config['num_generations']):
+            # Generate a new population
+            population = toolbox.generate()
 
-        # Evaluate the individuals:
-        # The following commented out line is how DEAP suggests to calculate fitness
-        # fitnesses = toolbox.map(toolbox.evaluate, population, unity_interface) # fuck this
+            # Evaluate the individuals:
+            # The following commented out line is how DEAP suggests to calculate fitness
+            # fitnesses = toolbox.map(toolbox.evaluate, population, unity_interface) # fuck this
 
-        # Here, it is done with the following to make evaluation parallell
-        # (evaluate many individuals) in Unity.
-        fitnesses = toolbox.evaluate(population, unity_interface) # very nice
+            # Here, it is done with the following to make evaluation parallell
+            # (evaluate many individuals) in Unity.
+            fitnesses = toolbox.evaluate(population, unity_interface) # very nice
 
-        # Assign the computed fitness to individuals
-        for ind, fit in zip(population, fitnesses):
-            ind.fitness.values = fit
+            # Assign the computed fitness to individuals
+            for ind, fit in zip(population, fitnesses):
+                ind.fitness.values = fit
 
-        # update hall of fame with current populations best k individuals
-        halloffame.update(population)
+            # update hall of fame with current populations best k individuals
+            halloffame.update(population)
 
-        # This creates stats of current population using the stats.register('') above
-        record = stats.compile(population)
-        logbooks[-1].record(gen=i, evals=lambda_, **record)
+            # This creates stats of current population using the stats.register('') above
+            record = stats.compile(population)
+            logbooks[-1].record(gen=g, run=r, **record)
 
-        if verbose:
-            print(logbooks[-1].stream)
+            if verbose:
+                print(logbooks[-1].stream)
 
-        # Update the strategy with the evaluated individuals
-        toolbox.update(population)
-        i += 1
+            # Update the strategy with the evaluated individuals
+            toolbox.update(population)
 
     return logbooks, halloffame
 
 
-def train_with_restarts(unity_interface, runs_path, verbose=True):
-
+def train_bipop(unity_interface, runs_path, verbose=True):
+    print(' -- Strategy: cma-es-bipop')
+    
     np.random.seed(ea_config['seed'])
 
     NRESTARTS = ea_config['num_restarts']  # Initialization + 9 I-POP restarts
