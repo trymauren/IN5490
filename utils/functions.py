@@ -18,7 +18,7 @@ def make_plots_from_logbook(path):
     """
     # print(path)
     path_w_out_extension = os.path.splitext(path)[0] # important to make shelve work!
-    file_name = path_w_out_extension[path_w_out_extension.find('_2023'):][1:] # Gets the date from 
+    file_name = path_w_out_extension[path_w_out_extension.find('_2023'):][1:] # Gets the date from path
     logbooks = []
     print(path_w_out_extension)
     print(file_name)
