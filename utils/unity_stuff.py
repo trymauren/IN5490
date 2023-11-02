@@ -57,7 +57,7 @@ class UnityInterface():
 
                 if i >= len(actions[0][0]) - 1:
                     decision_steps, _ = self.env.get_steps(self.behavior_names[action_i])
-                    positions.append(decision_steps.obs[0][0][:3]) # this works
+                    positions.append(decision_steps.obs[0][0][:3])
 
             self.env.step()
 

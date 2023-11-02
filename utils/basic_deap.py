@@ -75,7 +75,7 @@ def train(unity_interface, runs_path, verbose=True):
             
             # Select the next generation individuals
             offspring = toolbox.select(pop, len(pop))
-            # print(np.shape(offspring))
+
             # Clone the selected individuals
             offspring = list(map(toolbox.clone, offspring))
 
