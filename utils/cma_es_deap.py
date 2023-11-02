@@ -197,7 +197,10 @@ def train(unity_interface, runs_path, verbose=True):
         if quit == 'y':
             functions.dump_data(logbooks, halloffame, runs_path)
             exit()
- 
+        else:
+            print("Cant continue running, you idiot!")
+            return
+        
     import signal
     signal.signal(signal.SIGINT, signal_handler)
 

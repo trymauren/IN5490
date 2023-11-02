@@ -2,19 +2,12 @@ import os
 from sys import platform
 from datetime import datetime
 import pickle
-from config import interface_config
+from config import interface_config, ea_config
 from utils import fitness_evaluation, unity_stuff, cma_es_deap
 
-from deap import algorithms
-from deap import base
-from deap import benchmarks
-from deap import cma
-from deap import creator
-from deap import tools
+from deap import algorithms, base, benchmarks, cma, creator, tools
 import shelve
-
 import matplotlib.pyplot as plt
-from config import ea_config
 from tkinter import filedialog as fd
 
 def make_plots_from_logbook(path):
@@ -37,6 +30,9 @@ def make_plots_from_logbook(path):
     fig, [[ax1, ax2],[ax3, ax4]] = plt.subplots(ncols=2, nrows=2, figsize=(15,10))
     for logbook in logbooks:
         fitness = logbook.chapters['fitness'].select('avg')
+        print("fiteness:\n")
+        print(fitness)
+        print("\n")
         max_fitness = logbook.chapters['fitness'].select('max')
         amplitude = logbook.chapters['amplitude'].select('avg')
         phase_shift = logbook.chapters['phase_shift'].select('avg')
@@ -72,7 +68,7 @@ def make_plots_from_logbook(path):
     print(' -- Made plots')
 
 
-def fetch_halloffame_data(path):
+def get_halloffame_data(path):
     """Reads HOF data from file and visualizes the agent with highest fitness
 
     Args:
@@ -210,9 +206,11 @@ def dump_data(logbooks, halloffame, runs_path):
     """
     timestamp = get_timestamp()
     logbook_path = os.path.join(runs_path, 'logbook_' + timestamp)
-    halloffame_path = os.path.join(runs_path,'halloffame_' + timestamp)
+    halloffame_path = os.path.join(runs_path, 'halloffame_' + timestamp)
+    txt_path = os.path.join(runs_path, 'config_' + timestamp)
     dump_logbook(logbooks, logbook_path)
     dump_halloffame(halloffame, halloffame_path)
+    dicts_to_txt(txt_path)
 
 def dump_logbook(data, path):
     """
@@ -236,6 +234,30 @@ def dump_halloffame(data, path):
         for i, d in enumerate(data):
             fp[str(i)] = d
     print(' -- Dumped halloffame')
+    
+def dicts_to_txt(path_to_file):
+    """
+    Store the dictionaries from config.py in a TXT file within the specified path.
+    
+    Args:
+        path (str): Path including filename of the TXT file to store the data.
+        
+    Returns:
+        None
+    """
+    with open(path_to_file, 'w') as txtfile:
+        
+        # Write ea_config entries
+        txtfile.write("[ea_config]\n")
+        for key, value in ea_config.items():
+            txtfile.write(f"{key}: {value}\n")
+            
+        txtfile.write("\n")  # Adding a newline for separation
+        
+        # Write interface_config entries
+        txtfile.write("[interface_config]\n")
+        for key, value in interface_config.items():
+            txtfile.write(f"{key}: {value}\n")
 
 
 ### --- Helpers --- ###
