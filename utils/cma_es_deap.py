@@ -174,10 +174,10 @@ def train(unity_interface, runs_path, verbose=True):
     # Register statistics functions
     stats = tools.MultiStatistics(  fitness=stats_fitness, amplitude=stats_amplitude, 
                                     frequency=stats_frequency, phase_shift=stats_phase_shift)
-    stats.register('avg', lambda x: round(np.mean(x), 4))
-    stats.register('std', lambda x: round(np.std(x), 4))
-    stats.register('min', lambda x: round(np.min(x), 4))
-    stats.register('max', lambda x: round(np.max(x), 4))
+    stats.register('avg', lambda x: round(np.mean(x), 2))
+    stats.register('std', lambda x: round(np.std(x), 2))
+    stats.register('min', lambda x: round(np.min(x), 2))
+    stats.register('max', lambda x: round(np.max(x), 2))
 
     # Create a list to store all the logbooks. One logbook is created for each run.
     logbooks = list()
@@ -193,8 +193,8 @@ def train(unity_interface, runs_path, verbose=True):
 
 
     def signal_handler(signal, frame):
-        quit = input('Reeeeeeeaaaaally want to quit? q')
-        if quit == 'q':
+        quit = input('Really want to quit? y/n\n')
+        if quit == 'y':
             functions.dump_data(logbooks, halloffame, runs_path)
             exit()
  
