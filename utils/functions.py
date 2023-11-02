@@ -15,10 +15,20 @@ import matplotlib.pyplot as plt
 from config import ea_config
 
 def fetch_timestamp():
+    """Gets time of when function is called
+
+    Returns:
+        datetime: year_month_day_hour_minute_second
+    """
     return datetime.today().strftime('%Y_%m_%d_%H_%M_%S')
 
 def make_plots_from_logbook(path):
-    print(path[0])
+    """Makes plot from data stored in logbook
+
+    Args:
+        path (tulpe): path to logbook and halloffame in a tuple
+    """
+    print(path)
     path_w_out_extension = os.path.splitext(path[0])[0]
     file_name = path_w_out_extension[path_w_out_extension.find('_'):][1:] # Gets the date from 
     logbooks = []
