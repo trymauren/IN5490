@@ -72,6 +72,13 @@ def train(unity_interface, runs_path, verbose=True):
     pop = toolbox.population(n=ea_config['pop_size'])
     CXPB, MUTPB, NGEN = 0.5, 0.2, ea_config['num_generations']
 
+    def signal_handler(signal, frame):
+        functions.dump_data(logbooks, halloffame, runs_path)
+        exit()
+
+    import signal
+    signal.signal(signal.SIGINT, signal_handler)
+    
     for g in range(2):
         
         # Select the next generation individuals
