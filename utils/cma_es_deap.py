@@ -193,13 +193,9 @@ def train(unity_interface, runs_path, verbose=True):
 
 
     def signal_handler(signal, frame):
-        quit = input('Really want to quit? y/n\n')
-        if quit == 'y':
-            functions.dump_data(logbooks, halloffame, runs_path)
-            exit()
-        else:
-            print("Cant continue running, you idiot!")
-            return
+        functions.dump_data(logbooks, halloffame, runs_path)
+        exit()
+
         
     import signal
     signal.signal(signal.SIGINT, signal_handler)
