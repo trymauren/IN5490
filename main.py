@@ -48,7 +48,7 @@ def main():
 	else:
 
 		if 'plot' in sys.argv:
-			timestamp = input('Timestamp to plot: (enter to use latest)\n')
+			timestamp = input('Timestamp to plot: \'enter\' to use latest, \'n\' to navigate\n')
 			if timestamp == 'n':
 				print('Pick logbook file')
 				path_to_files = fd.askopenfilename()
@@ -69,8 +69,7 @@ def main():
 			path_to_file = fd.askopenfilename()
 		else:
 			path_to_file = functions.get_newest_file_paths(runs_path)
-		print("path to files is:")
-		
+
 		halloffame = functions.hof_data(path_to_file)
    
 		exe_path = functions.get_executable(executable_path, 1)
