@@ -18,8 +18,9 @@ def fetch_timestamp():
     return datetime.today().strftime('%Y_%m_%d_%H_%M_%S')
 
 def make_plots_from_logbook(path):
-    path_w_out_extension = os.path.splitext(path)[0]
-    file_name = path_w_out_extension[path_w_out_extension.find('_'):][1:]
+    print(path[0])
+    path_w_out_extension = os.path.splitext(path[0])[0]
+    file_name = path_w_out_extension[path_w_out_extension.find('_'):][1:] # Gets the date from 
     logbooks = []
     with shelve.open(path_w_out_extension, 'c') as fp: 
         for i, d in enumerate(fp):
@@ -28,7 +29,7 @@ def make_plots_from_logbook(path):
 
     for logbook in logbooks:
         fitness = logbook.chapters['fitness'].select('avg')
-        frequency = logbook.chapters['frequency'].select('avg')
+        max_fitness = logbook.chapters['fitness'].select('max')
         amplitude = logbook.chapters['amplitude'].select('avg')
         phase_shift = logbook.chapters['phase_shift'].select('avg')
 
@@ -41,8 +42,8 @@ def make_plots_from_logbook(path):
         ax1.grid(True)
 
         # Plotting and styling for Average Frequency
-        ax2.plot(frequency, marker='s', linestyle='--', color='g')
-        ax2.set_title('Average Frequency', fontsize=14)
+        ax2.plot(max_fitness, marker='s', linestyle='--', color='g')
+        ax2.set_title('Max Fitness', fontsize=14)
         ax2.set_xlabel('Generation', fontsize=12)
         ax2.set_ylabel('Frequency', fontsize=12)
         ax2.grid(True)
@@ -176,17 +177,20 @@ def get_specific_file_paths(path, timestamp):
     return path_to_logbook, path_to_halloffame
 
 def hof_data(path):
+    """Reads HOF data from file and visualizes the agent with highest fitness
 
-    path_w_out_extension = os.path.splitext(path)[0]
+    Args:
+        path(selve.DbfilenameShelf,selve.DbfilenameShelf): Tuple of shelve.DbfilenameShelf file paths
+
+    Returns:
+        data[][]: Nested list of all parameters for amplitude, frequency and phase shift for the best fitness
+    """
+    print("type path:")
+    print(type(path))
+    path_w_out_extension = os.path.splitext(path[1])[0]
     data = []
-    print("pathwexte")
-    print(path_w_out_extension)
     with shelve.open(path_w_out_extension, 'c') as fp: 
         print(type(fp))
         for i, d in enumerate(fp):
-            print("data:")
-            print(fp[str(i)])
             data.append(fp[str(i)])
-    print("data")
-    print(data)
     return data
