@@ -185,8 +185,7 @@ def hof_data(path):
     Returns:
         data[][]: Nested list of all parameters for amplitude, frequency and phase shift for the best fitness
     """
-    print("type path:")
-    print(type(path))
+
     path_w_out_extension = os.path.splitext(path[1])[0]
     data = []
     with shelve.open(path_w_out_extension, 'c') as fp: 
