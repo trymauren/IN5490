@@ -2,6 +2,8 @@ import os
 from sys import platform
 from datetime import datetime
 import pickle
+from config import interface_config
+from utils import fitness_evaluation, unity_stuff, cma_es_deap
 
 from deap import algorithms
 from deap import base
@@ -13,6 +15,7 @@ import shelve
 
 import matplotlib.pyplot as plt
 from config import ea_config
+from tkinter import filedialog as fd
 
 def fetch_timestamp():
     """Gets time of when function is called
@@ -36,14 +39,14 @@ def make_plots_from_logbook(path):
         for i, d in enumerate(fp):
             logbook = fp[str(i)]
             logbooks.append(logbook) 
-
+            
+    fig, [[ax1, ax2],[ax3, ax4]] = plt.subplots(ncols=2, nrows=2, figsize=(15,10))
     for logbook in logbooks:
         fitness = logbook.chapters['fitness'].select('avg')
         max_fitness = logbook.chapters['fitness'].select('max')
         amplitude = logbook.chapters['amplitude'].select('avg')
         phase_shift = logbook.chapters['phase_shift'].select('avg')
 
-        fig, [[ax1, ax2],[ax3, ax4]] = plt.subplots(ncols=2, nrows=2, figsize=(15,10))
         # Plotting and styling for Average Fitness
         ax1.plot(fitness, marker='o', linestyle='-', color='b')
         ax1.set_title('Average Fitness', fontsize=14)
@@ -71,7 +74,7 @@ def make_plots_from_logbook(path):
         ax4.set_xlabel('Generation', fontsize=12)
         ax4.set_ylabel('Phase Shift', fontsize=12)
         ax4.grid(True)
-        plt.savefig(f'4xplot_{file_name}.pdf',dpi=300)
+    plt.savefig(f'4xplot_{file_name}.pdf',dpi=300)
     print(' -- Made plots')
 
 def get_executable(executable_path, pop_size=ea_config['pop_size']):
@@ -203,3 +206,88 @@ def hof_data(path):
         for i, d in enumerate(fp):
             data.append(fp[str(i)])
     return data
+
+def sim_best(runs_path, executable_path):
+    """
+    Simulate the best solution from the hall of fame.
+    
+    Args:
+        runs_path (str): Path to the directory where simulation runs are stored.
+        executable_path (str): Path to the executable file.
+        
+    Returns:
+        None
+    """
+    timestamp = input('Timestamp to simulate: (enter to use latest), n to navigate\n')
+    if timestamp == 'n':
+        path_to_file = fd.askopenfilename()
+    else:
+        path_to_file = get_newest_file_paths(runs_path)
+
+    halloffame = hof_data(path_to_file)
+
+    exe_path = get_executable(executable_path, 1)
+    unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, **interface_config)
+
+    fitness_evaluation.simulate_best(halloffame, 500, unity_interface)
+    
+
+def plot(runs_path):
+    """
+    Plot the results based on a given timestamp or the latest results.
+    
+    Args:
+        runs_path (str): Path to the directory where simulation runs are stored.
+        
+    Returns:
+        None
+    """
+    timestamp = input('Timestamp to plot: \'enter\' to use latest, \'n\' to navigate\n')
+    if timestamp == 'n':
+        print('Pick logbook file')
+        path_to_files = fd.askopenfilename()
+        # print('Pick halloffame file')
+        # path_to_files[1] = fd.askopenfilename()
+        # functions.get_specific_file_paths(runs_path, timestamp)
+    else:
+        path_to_files = get_newest_file_paths(runs_path)
+    make_plots_from_logbook(path_to_files)
+    # functions.make_plots_from_halloffame(path_to_files[1])
+
+def train(runs_path, executable_path):
+    """
+    Train the simulation using CMA-ES (Covariance Matrix Adaptation Evolution Strategy).
+    
+    Args:
+        runs_path (str): Path to the directory where simulation runs are stored.
+        executable_path (str): Path to the executable file.
+        
+    Returns:
+        None
+    """
+    # Create the simulation environment
+    exe_path = get_executable(executable_path, ea_config['pop_size'])
+    unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, **interface_config)
+
+    # Run EA
+    logbooks, halloffame = cma_es_deap.train(unity_interface, runs_path)
+
+    # Stop simulation environmentsim
+    unity_interface.stop_env()
+
+    # Write results to file
+    dump_data(logbooks, halloffame, runs_path)
+    
+    
+def plot_latest(runs_path):
+    """
+    Plot the latest results from the simulation runs.
+    
+    Args:
+        runs_path (str): Path to the directory where simulation runs are stored.
+        
+    Returns:
+        None
+    """
+    path_to_files = get_newest_file_paths(runs_path)
+    make_plots_from_logbook(path_to_files[0])
