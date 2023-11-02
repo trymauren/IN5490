@@ -2,7 +2,7 @@ import os
 from sys import platform
 from datetime import datetime
 import pickle
-from config import interface_config
+from config import interface_config, ea_config
 from utils import fitness_evaluation, unity_stuff, cma_es_deap, basic_deap
 
 import shelve
