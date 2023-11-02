@@ -9,33 +9,27 @@ import shelve
 import matplotlib.pyplot as plt
 from tkinter import filedialog as fd
 
-def make_plots_from_logbook(path):
+def make_plots_from_logbook(path, runs_path):
     """Makes plot from data stored in logbook
 
     Args:
         path (tulpe): path to logbook and halloffame in a tuple
     """
-    # print(path)
     path_w_out_extension = os.path.splitext(path)[0] # important to make shelve work!
     file_name = path_w_out_extension[path_w_out_extension.find('_2023'):][1:] # Gets the date from path
     logbooks = []
-    print(path_w_out_extension)
-    print(file_name)
+    
     with shelve.open(path_w_out_extension, 'c') as fp: 
         for i, d in enumerate(fp):
             logbook = fp[str(i)]
             logbooks.append(logbook) 
             
-    fig, [[ax1, ax2],[ax3, ax4]] = plt.subplots(ncols=2, nrows=2, figsize=(15,10))
+    fig, (ax1, ax2) = plt.subplots(ncols=1, nrows=2, figsize=(15,10))
     for logbook in logbooks:
         fitness = logbook.chapters['fitness'].select('avg')
-        print("fiteness:\n")
-        print(fitness)
-        print("\n")
         max_fitness = logbook.chapters['fitness'].select('max')
-        amplitude = logbook.chapters['amplitude'].select('avg')
-        phase_shift = logbook.chapters['phase_shift'].select('avg')
 
+        
         # Plotting and styling for Average Fitness
         ax1.plot(fitness)
         ax1.set_title('Average Fitness', fontsize=14)
@@ -50,20 +44,7 @@ def make_plots_from_logbook(path):
         ax2.set_ylabel('Fitness', fontsize=12)
         ax2.grid(True)
 
-        # Plotting and styling for Average Amplitude
-        ax3.plot(amplitude)
-        ax3.set_title('Average Amplitude', fontsize=14)
-        ax3.set_xlabel('Generation', fontsize=12)
-        ax3.set_ylabel('Amplitude', fontsize=12)
-        ax3.grid(True)
-
-        # Plotting and styling for Average Phase Shift
-        ax4.plot(phase_shift)
-        ax4.set_title('Average Phase Shift', fontsize=14)
-        ax4.set_xlabel('Generation', fontsize=12)
-        ax4.set_ylabel('Phase Shift', fontsize=12)
-        ax4.grid(True)
-    plt.savefig(f'4xplot_{file_name}.pdf',dpi=300)
+    plt.savefig(f'{runs_path}/4xplot_{file_name}.pdf',dpi=300)
     print(' -- Made plots')
 
 
@@ -123,7 +104,8 @@ def plot(runs_path):
         path_to_logbook = fd.askopenfilename()
     else:
         path_to_logbook = get_newest_logbook(runs_path)
-    make_plots_from_logbook(path_to_logbook)
+    make_plots_from_logbook(path_to_logbook, runs_path)
+    
 
 def train(runs_path, executable_path):
     """
@@ -215,7 +197,7 @@ def dump_data(logbooks, halloffame, runs_path):
     txt_path = os.path.join(runs_path, 'config_' + timestamp)
     dump_logbook(logbooks, logbook_path)
     dump_halloffame(halloffame, halloffame_path)
-    dicts_to_txt(txt_path)
+    config_to_txt(txt_path)
 
 def dump_logbook(data, path):
     """
@@ -240,7 +222,7 @@ def dump_halloffame(data, path):
             fp[str(i)] = d
     print(' -- Dumped halloffame')
     
-def dicts_to_txt(path_to_file):
+def config_to_txt(path_to_file):
     """
     Store the dictionaries from config.py in a TXT file within the specified path.
     
