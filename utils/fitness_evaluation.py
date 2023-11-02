@@ -4,7 +4,8 @@ from config import ea_config
 # Python modules
 import numpy as np
 from tqdm import tqdm
-import time 
+import time
+
 def evaluate_population(population, unity_interface) -> None:
 	"""
 	Splits the population in groups, passing them to unity for evaluation.
@@ -54,13 +55,23 @@ def compute_movement(individual, num_move_directions=12) -> np.array(np.array):
 		Arg: an individual (the individual must inherit from python list).
 		Ret: np array containing movements for all moving directions of all limbs. 
 	"""
-	limbs = list(np.array_split(individual,num_move_directions))
-	movement = [0]*len(limbs)
-	for i in range(len(limbs)):
-		sinusoid = compute_sin(*(limbs[i]))
-		movement[i] = sinusoid
+	if ea_config['equal_frequency_all_limbs']:
+		freq = individual[-1]
+		limbs = list(np.array_split(individual[:-1],num_move_directions))
+		movement = [0]*len(limbs)
+		for i in range(len(limbs)):
+			sinusoid = compute_sin(*(limbs[i]), freq)
+			movement[i] = sinusoid
+		return np.asarray(movement)
 
-	return np.asarray(movement)
+	else:
+		limbs = list(np.array_split(individual,num_move_directions))
+		movement = [0]*len(limbs)
+		for i in range(len(limbs)):
+			sinusoid = compute_sin(*(limbs[i]))
+			movement[i] = sinusoid
+		return np.asarray(movement)
+
 
 def repeat_movement(movement, repetitions, num_move_directions=12, num_movements=10):
 	"""Repeat the movement from a given list [1,2,3]*2 --> [1,2,3,1,2,3] 
@@ -75,17 +86,16 @@ def repeat_movement(movement, repetitions, num_move_directions=12, num_movements
 	movement_rep = np.zeros((num_move_directions,num_movements*repetitions))
 	for i in range(num_move_directions):
 		movement_rep[i] = np.tile(movement[i], repetitions)	
-
 	return movement_rep
 
-def compute_sin(A=1, f=2, phase=0) -> np.array:
+def compute_sin(A=1, phase=0, f=2) -> np.array:
 	"""
 	Computes a sinusoid for the given parameters.
 		Arg: A: amplitude, f: frequency, phase: phase
 		Ret: sinusoid-signal
 	"""
 	t = np.array([0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1], dtype=float)
-	sinusoid = A*np.sin(t * f + phase)
+	sinusoid = A*np.sin(2*np.pi * t * f + np.pi*phase)
 	return sinusoid
 
 def simulate_best( movement: np.array, repetitions : int, unity_interface) -> None:
