@@ -61,17 +61,18 @@ def train(unity_interface, runs_path, verbose=True):
 
     # Generate the initial population
 
-    logbook = tools.Logbook()
-    logbook.header = 'gen', 'fitness', 'amplitude', 'frequency', 'phase_shift'
-    logbook.chapters['fitness'].header = 'std', 'min', 'avg', 'max'
-    logbook.chapters['amplitude'].header = 'std', 'min', 'avg', 'max'
-    logbook.chapters['frequency'].header = 'std', 'min', 'avg', 'max'
-    logbook.chapters['phase_shift'].header = 'std', 'min', 'avg', 'max'
+    logbooks = list()
+    logbooks.append(tools.Logbook())
+    logbooks[-1].header = 'gen', 'fitness', 'amplitude', 'frequency', 'phase_shift'
+    logbooks[-1].chapters['fitness'].header = 'std', 'min', 'avg', 'max'
+    logbooks[-1].chapters['amplitude'].header = 'std', 'min', 'avg', 'max'
+    logbooks[-1].chapters['frequency'].header = 'std', 'min', 'avg', 'max'
+    logbooks[-1].chapters['phase_shift'].header = 'std', 'min', 'avg', 'max'
     
     pop = toolbox.population(n=ea_config['pop_size'])
     CXPB, MUTPB, NGEN = 0.5, 0.2, ea_config['num_generations']
 
-    for g in range(NGEN):
+    for g in range(2):
         
         # Select the next generation individuals
         offspring = toolbox.select(pop, len(pop))
@@ -101,7 +102,9 @@ def train(unity_interface, runs_path, verbose=True):
         # The population is entirely replaced by the offspring
         pop[:] = offspring
         record = stats.compile(pop)
-        logbook.record(gen=g, **record)
+        logbooks[-1].record(gen=g, **record)
         if verbose:
-            print(logbook.stream)
-    return pop
+            print(logbooks[-1].stream)
+        halloffame.update(pop)
+
+    return logbooks, halloffame
