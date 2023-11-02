@@ -190,13 +190,10 @@ def train(unity_interface, runs_path, verbose=True):
     lambda0 = 60
     regime = 1
     
-
-
     def signal_handler(signal, frame):
         functions.dump_data(logbooks, halloffame, runs_path)
         exit()
 
-        
     import signal
     signal.signal(signal.SIGINT, signal_handler)
 
