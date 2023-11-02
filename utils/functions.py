@@ -2,7 +2,7 @@ import os
 from sys import platform
 from datetime import datetime
 import pickle
-from config import interface_config
+from config import interface_config, ea_config
 from utils import fitness_evaluation, unity_stuff, cma_es_deap, basic_deap
 
 import shelve
@@ -143,11 +143,13 @@ def train(runs_path, executable_path):
     # Run EA
     if ea_config['ea_type'] == 'basic_deap':
         logbooks, halloffame = basic_deap.train(unity_interface, runs_path)
-    elif ea_config['ea_type'] == 'cma_es_deap':
-        logbooks, halloffame = cma_es_deap.train(unity_interface, runs_path)
-    elif ea_config['ea_type'] == 'cma_es_deap_w_restarts':
-        logbooks, halloffame = cma_es_deap.train_w_restarts(unity_interface, runs_path)
-
+    elif ea_config['ea_type'] == 'cma_es_deap_without_restarts':
+        logbooks, halloffame = cma_es_deap.train_without_restarts(unity_interface, runs_path)
+    elif ea_config['ea_type'] == 'cma_es_deap_with_restarts':
+        logbooks, halloffame = cma_es_deap.train_with_restarts(unity_interface, runs_path)
+    else:
+        print(f' -- Invalid ea_type in config: {ea_config["ea_type"]}')
+        exit()
     # Stop simulation environmentsim
     unity_interface.stop_env()
 
