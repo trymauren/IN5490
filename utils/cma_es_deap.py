@@ -144,11 +144,13 @@ from config import ea_config
 def train(unity_interface, runs_path, verbose=True):
 
     np.random.seed(ea_config['seed'])
+
     NRESTARTS = ea_config['num_restarts']  # Initialization + 9 I-POP restarts
     SIGMA0 = int(ea_config['upper_start_limit'])/5    # 1/5th of the domain [-5 5]
     N = ea_config['genome_len']
     toolbox = base.Toolbox()
-
+    # print(np.random.uniform(ea_config['lower_start_limit'], ea_config['upper_start_limit'], N))
+    # exit()
     creator.create('FitnessMax', base.Fitness, weights=(1.0,))
     creator.create('Individual', list, fitness=creator.FitnessMax)
 
@@ -158,12 +160,14 @@ def train(unity_interface, runs_path, verbose=True):
     # Create the hall of fame (the container storing the best individuals)
     halloffame = tools.HallOfFame(1)
 
-    # TODO: move these to functions.py or something else
     def amplitude(ind):
+        print(ind)
         return np.mean(np.array([ind[i] for i in range(0,len(ind),3)]))
     def frequency(ind):
+        print(ind)
         return np.mean(np.array([ind[i] for i in range(1,len(ind),3)]))
     def phase_shift(ind):
+        print(ind)
         return np.mean(np.array([ind[i] for i in range(2,len(ind),3)]))
 
     # Create the statistics functions
@@ -171,13 +175,15 @@ def train(unity_interface, runs_path, verbose=True):
     stats_amplitude     = tools.Statistics(amplitude)
     stats_frequency     = tools.Statistics(frequency)
     stats_phase_shift   = tools.Statistics(phase_shift)
+    
     # Register statistics functions
     stats = tools.MultiStatistics(  fitness=stats_fitness, amplitude=stats_amplitude, 
                                     frequency=stats_frequency, phase_shift=stats_phase_shift)
-    stats.register('avg', lambda x: round(np.mean(x), 2))
-    stats.register('std', lambda x: round(np.std(x), 2))
-    stats.register('min', lambda x: round(np.min(x), 2))
-    stats.register('max', lambda x: round(np.max(x), 2))
+    
+    stats.register('avg', lambda x: np.mean(x))
+    stats.register('std', lambda x: np.std(x))
+    stats.register('min', lambda x: np.min(x))
+    stats.register('max', lambda x: np.max(x))
 
     # Create a list to store all the logbooks. One logbook is created for each run.
     logbooks = list()
@@ -185,9 +191,8 @@ def train(unity_interface, runs_path, verbose=True):
     nsmallpopruns = 0
     smallbudget = list()
     largebudget = list()
-    # lambda0 = 4 + int(3 * np.log(N)) # population size - dynamic, dependent on individual size
+    lambda0 = 4 + int(3 * np.log(N)) # population size - dynamic, dependent on individual size
     # lambda0 = ea_config['pop_size'] # population size - static
-    lambda0 = 60
     regime = 1
     
     def signal_handler(signal, frame):
@@ -238,7 +243,7 @@ def train(unity_interface, runs_path, verbose=True):
         mins = deque(maxlen=TOLHISTFUN_ITER)
 
         # We start with a centroid in [-4, 4]**D
-        strategy = cma.Strategy(centroid=np.random.uniform(-1, 1, N), sigma=sigma, lambda_=lambda_)
+        strategy = cma.Strategy(centroid=np.random.uniform(ea_config['lower_start_limit'], ea_config['upper_start_limit'], N), sigma=sigma, lambda_=lambda_)
         toolbox.register('generate', strategy.generate, creator.Individual)
         toolbox.register('update', strategy.update)
 
@@ -270,6 +275,7 @@ def train(unity_interface, runs_path, verbose=True):
 
             # Here, it is done with the following to make evaluation parallell
             # (evaluate many individuals) in Unity.
+            print(population)
             fitnesses = toolbox.evaluate(population, unity_interface) # very nice
 
             # Assign the computed fitness to individuals

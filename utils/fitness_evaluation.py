@@ -72,7 +72,6 @@ def compute_movement(individual, num_move_directions=12) -> np.array(np.array):
 			movement[i] = sinusoid
 		return np.asarray(movement)
 
-
 def repeat_movement(movement, repetitions, num_move_directions=12, num_movements=10):
 	"""Repeat the movement from a given list [1,2,3]*2 --> [1,2,3,1,2,3] 
 	Args:
@@ -95,10 +94,10 @@ def compute_sin(A=1, phase=0, f=2) -> np.array:
 		Ret: sinusoid-signal
 	"""
 	t = np.array([0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1], dtype=float)
-	sinusoid = A*np.sin(2*np.pi * t * f + np.pi*phase)
+	sinusoid = A*np.sin(t * f + phase)
 	return sinusoid
 
-def simulate_best( movement: np.array, repetitions : int, unity_interface) -> None:
+def simulate_best(movement: np.array, repetitions : int, unity_interface) -> None:
 	"""Simulate a singe individ with one crwaler 
 
 	Args:

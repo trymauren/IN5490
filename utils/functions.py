@@ -2,10 +2,9 @@ import os
 from sys import platform
 from datetime import datetime
 import pickle
-from config import interface_config, ea_config
-from utils import fitness_evaluation, unity_stuff, cma_es_deap
+from config import interface_config
+from utils import fitness_evaluation, unity_stuff, cma_es_deap, basic_deap
 
-from deap import algorithms, base, benchmarks, cma, creator, tools
 import shelve
 import matplotlib.pyplot as plt
 from tkinter import filedialog as fd
@@ -59,10 +58,9 @@ def get_halloffame_data(path):
         data[][]: Nested list of all parameters for amplitude, frequency and phase shift for the best fitness
     """
 
-    path_w_out_extension = os.path.splitext(path[1])[0]
+    path_w_out_extension = os.path.splitext(path)[0]
     data = []
     with shelve.open(path_w_out_extension, 'c') as fp: 
-        print(type(fp))
         for i, d in enumerate(fp):
             data.append(fp[str(i)])
     return data
@@ -125,7 +123,12 @@ def train(runs_path, executable_path):
     unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, **interface_config)
 
     # Run EA
-    logbooks, halloffame = cma_es_deap.train(unity_interface, runs_path)
+    if ea_config['ea_type'] == 'basic_deap':
+        logbooks, halloffame = basic_deap.train(unity_interface, runs_path)
+    elif ea_config['ea_type'] == 'cma_es_deap':
+        logbooks, halloffame = cma_es_deap.train(unity_interface, runs_path)
+    elif ea_config['ea_type'] == 'cma_es_deap_w_restarts':
+        logbooks, halloffame = cma_es_deap.train_w_restarts(unity_interface, runs_path)
 
     # Stop simulation environmentsim
     unity_interface.stop_env()
