@@ -1,8 +1,9 @@
 ea_config = {
-# 'ea_type'						: 'cma_es_deap_without_restarts',
-'ea_type'						: 'basic_deap',
+# 'ea_type'						: 'cma_es_bipop',
+'ea_type'						: 'cma_es',
+# 'ea_type'						: 'basic',
 'pop_size'						: 60,
-'num_generations'				: 2, # only appliccable for basic_ea
+'num_generations'				: 1000,
 'std_dev'						: 3,
 'genome_len'					: 25,
 'num_mov_repeat'				: 50,
@@ -11,11 +12,11 @@ ea_config = {
 'upper_start_limit'				: 10,
 'num_restarts'					: 10,
 'seed'							: 128,
-'equal_frequency_all_limbs'		: True,
+'equal_frequency_all_limbs'		: False,
 'basic_ea'						: False,
 }
 
 interface_config = {
 'no_graphics'		:False,
-'worker_id'			:6
+'worker_id'			:4
 }
