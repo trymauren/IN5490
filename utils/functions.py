@@ -85,7 +85,8 @@ def sim_best(runs_path, executable_path):
     halloffame = get_halloffame_data(path_to_halloffame)
 
     exe_path = get_executable(executable_path, 1)
-    unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, **interface_config)
+    print()
+    unity_interface = unity_stuff.UnityInterface(executable_file=exe_path)
 
     fitness_evaluation.simulate_best(halloffame, 500, unity_interface)
     
