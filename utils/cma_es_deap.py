@@ -111,7 +111,7 @@ def train_normal(unity_interface, runs_path, verbose=True):
     for r in range(ea_config['num_restarts']):
 
         np.random.seed(ea_config['seed']+r)
-        print(np.random.seed(ea_config['seed']+r))
+        print('-- Seed: ', ea_config['seed']+r)
         logbooks.append(tools.Logbook())
         logbooks[-1].header = 'gen', 'run', 'pop_size', 'fitness', 'amplitude', 'frequency', 'phase_shift'
         logbooks[-1].chapters['fitness'].header = 'std', 'min', 'avg', 'max'
