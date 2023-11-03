@@ -112,7 +112,7 @@ def train_normal(unity_interface, runs_path, verbose=True):
     for r in range(ea_config['num_restarts']):
 
         logbooks.append(tools.Logbook())
-        logbooks[-1].header = 'gen', 'run', 'fitness', 'amplitude', 'frequency', 'phase_shift'
+        logbooks[-1].header = 'gen', 'run', 'pop_size', 'fitness', 'amplitude', 'frequency', 'phase_shift'
         logbooks[-1].chapters['fitness'].header = 'std', 'min', 'avg', 'max'
         logbooks[-1].chapters['amplitude'].header = 'std', 'min', 'avg', 'max'
         logbooks[-1].chapters['frequency'].header = 'std', 'min', 'avg', 'max'
@@ -139,7 +139,7 @@ def train_normal(unity_interface, runs_path, verbose=True):
 
             # This creates stats of current population using the stats.register('') above
             record = stats.compile(population)
-            logbooks[-1].record(gen=g, run=r, **record)
+            logbooks[-1].record(gen=g, run=r, pop_size=len(population), **record)
 
             if verbose:
                 print(logbooks[-1].stream)

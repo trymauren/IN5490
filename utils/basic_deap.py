@@ -65,7 +65,7 @@ def train(unity_interface, runs_path, verbose=True):
         pop = toolbox.population(n=ea_config['pop_size'])
 
         logbooks.append(tools.Logbook())
-        logbooks[-1].header = 'gen', 'run', 'fitness', 'amplitude', 'frequency', 'phase_shift'
+        logbooks[-1].header = 'gen', 'run', 'pop_size', 'fitness', 'amplitude', 'frequency', 'phase_shift'
         logbooks[-1].chapters['fitness'].header = 'std', 'min', 'avg', 'max'
         logbooks[-1].chapters['amplitude'].header = 'std', 'min', 'avg', 'max'
         logbooks[-1].chapters['frequency'].header = 'std', 'min', 'avg', 'max'
@@ -101,7 +101,7 @@ def train(unity_interface, runs_path, verbose=True):
             # The population is entirely replaced by the offspring
             pop[:] = offspring
             record = stats.compile(pop)
-            logbooks[-1].record(gen=g, run=r, **record)
+            logbooks[-1].record(gen=g, run=r, pop_size=len(pop), **record)
             if verbose:
                 print(logbooks[-1].stream)
             halloffame.update(pop)
