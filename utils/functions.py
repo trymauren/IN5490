@@ -274,7 +274,7 @@ def get_executable(executable_path, pop_size=ea_config['pop_size']):
         Ret: Path to the correct executable
     """
     if platform == "linux" or platform == "linux2":
-        ret = executable_path + 'exe_linux_test_m'
+        ret = executable_path + 'exe_linux_60/linux_60.x86_64'
     elif platform == "darwin":
         if pop_size == 1:
             ret = executable_path + 'exe_mac_1.app'
