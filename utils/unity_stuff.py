@@ -5,6 +5,10 @@ import numpy as np
 from mlagents_envs.environment import UnityEnvironment
 from mlagents_envs.base_env import ActionTuple
 from mlagents_envs.environment import UnityEnvironment
+from mlagents_envs.logging_util import set_log_level, DEBUG
+
+set_log_level(DEBUG)
+
 
 class UnityInterface():
 
@@ -22,7 +26,7 @@ class UnityInterface():
         Returns:
             UnityEnvironment: return the unity environment
         """
-        env = UnityEnvironment(file_name=executable_file, no_graphics=no_graphics, worker_id=worker_id)
+        env = UnityEnvironment(file_name=executable_file, no_graphics=no_graphics, worker_id=worker_id, log_folder='./')
         env.reset()
         return env
 

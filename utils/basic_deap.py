@@ -16,6 +16,7 @@ def train(unity_interface, runs_path, verbose=True):
     N = ea_config['genome_len']
     lower_start_limit = ea_config['lower_start_limit']
     upper_start_limit = ea_config['upper_start_limit']
+    np.random.seed(ea_config['seed']+r)
 
     def signal_handler(signal, frame):
         functions.dump_data(logbooks, halloffame, runs_path)
@@ -23,7 +24,6 @@ def train(unity_interface, runs_path, verbose=True):
 
     import signal
     signal.signal(signal.SIGINT, signal_handler)
-    np.random.seed(ea_config['seed'])
 
     creator.create('FitnessMax', base.Fitness, weights=(1.0,))
     creator.create('Individual', list, fitness=creator.FitnessMax)
@@ -61,9 +61,9 @@ def train(unity_interface, runs_path, verbose=True):
     CXPB, MUTPB = 0.5, 0.2
     
     for r in range(ea_config['num_restarts']):
-        
         pop = toolbox.population(n=ea_config['pop_size'])
-
+        np.random.seed(ea_config['seed']+r)
+        print(np.random.seed(ea_config['seed']+r))
         logbooks.append(tools.Logbook())
         logbooks[-1].header = 'gen', 'run', 'pop_size', 'fitness', 'amplitude', 'frequency', 'phase_shift'
         logbooks[-1].chapters['fitness'].header = 'std', 'min', 'avg', 'max'
