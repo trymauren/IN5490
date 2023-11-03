@@ -79,7 +79,7 @@ def train_normal(unity_interface, runs_path, verbose=True):
     def amplitude(ind):
         return np.mean(np.array([ind[i] for i in range(0,len(ind),3)]))
     def frequency(ind):
-        return np.abs(np.mean(np.array([ind[i] for i in range(1,len(ind),3)])))
+        return np.abs(ind[-1])
     def phase_shift(ind):
         return np.mean(np.array([ind[i] for i in range(2,len(ind),3)]))
 
@@ -97,22 +97,22 @@ def train_normal(unity_interface, runs_path, verbose=True):
     stats.register('min', lambda x: np.min(x))
     stats.register('max', lambda x: np.max(x))
 
-
-    strategy = cma.Strategy(
-                            centroid=np.random.uniform(lower_start_limit, upper_start_limit, N),
-                            lambda_=lambda_,
-                            sigma=sigma
-                            )
-
-    toolbox.register('generate', strategy.generate, creator.Individual)
-    toolbox.register('update', strategy.update)
-
     logbooks = list()
 
     for r in range(ea_config['num_restarts']):
 
         np.random.seed(ea_config['seed']+r)
         print('-- Seed: ', ea_config['seed']+r)
+
+        strategy = cma.Strategy(
+                            centroid=np.random.uniform(lower_start_limit, upper_start_limit, N),
+                            lambda_=lambda_,
+                            sigma=sigma
+                            )
+
+        toolbox.register('generate', strategy.generate, creator.Individual)
+        toolbox.register('update', strategy.update)
+
         logbooks.append(tools.Logbook())
         logbooks[-1].header = 'gen', 'run', 'pop_size', 'fitness', 'amplitude', 'frequency', 'phase_shift'
         logbooks[-1].chapters['fitness'].header = 'std', 'min', 'avg', 'max'
