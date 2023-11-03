@@ -53,7 +53,7 @@ def train_normal(unity_interface, runs_path, verbose=True):
     N = ea_config['genome_len']
     lower_start_limit = ea_config['lower_start_limit']
     upper_start_limit = ea_config['upper_start_limit']
-    np.random.seed(ea_config['seed']+r)
+    np.random.seed(ea_config['seed'])
 
     def signal_handler(signal, frame):
         functions.dump_data(logbooks, halloffame, runs_path)
