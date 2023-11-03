@@ -50,7 +50,7 @@ def make_plots_from_logbook(path, runs_path):
     ax1.set_ylabel('Fitness', fontsize=19)
     ax1.grid(True)
     ax1.legend(loc='center left', bbox_to_anchor=(1, 0.5))  # Position the legend on the right
-    fig1.savefig(f'{runs_path}/avg_fitness.pdf', dpi=400, bbox_inches='tight')  # Adjust the saving to include the legend
+    fig1.savefig(f'{runs_path}/avg_fitness_{file_name}.pdf', dpi=400, bbox_inches='tight')  # Adjust the saving to include the legend
     plt.close(fig1)
 
     # Finalize and save the Max Fitness plot
@@ -59,7 +59,7 @@ def make_plots_from_logbook(path, runs_path):
     ax2.set_ylabel('Fitness', fontsize=19)
     ax2.grid(True)
     ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5))  # Position the legend on the right
-    fig2.savefig(f'{runs_path}/max_fitness.pdf', dpi=400, bbox_inches='tight')  # Adjust the saving to include the legend
+    fig2.savefig(f'{runs_path}/max_fitness_{file_name}.pdf', dpi=400, bbox_inches='tight')  # Adjust the saving to include the legend
     plt.close(fig2)
 
     # Finalize and save the Average Frequency plot
@@ -68,7 +68,7 @@ def make_plots_from_logbook(path, runs_path):
     ax3.set_ylabel('Frequency', fontsize=19)
     ax3.grid(True)
     ax3.legend(loc='center left', bbox_to_anchor=(1, 0.5))  # Position the legend on the right
-    fig3.savefig(f'{runs_path}/avg_frequency.pdf', dpi=400, bbox_inches='tight')  # Adjust the saving to include the legend
+    fig3.savefig(f'{runs_path}/avg_frequency_{file_name}.pdf', dpi=400, bbox_inches='tight')  # Adjust the saving to include the legend
     plt.close(fig3)
 
     print('All plots saved')
