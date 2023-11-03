@@ -67,11 +67,11 @@ def make_plots_from_logbook(path, runs_path):
     ax_fitness.fill_between(range(len(avg_of_max_fitness)), avg_of_max_fitness - std_dev_max_fitness, avg_of_max_fitness + std_dev_max_fitness, alpha=0.2)
 
     # Styling the plot for fitness
-    ax_fitness.set_title('Fitness Performance Metrics with Error Bands', fontsize=24)
+    ax_fitness.set_title('Fitness Performance', fontsize=20)
     ax_fitness.set_xlabel('Generation', fontsize=19)
     ax_fitness.set_ylabel('Fitness', fontsize=19)
     ax_fitness.grid(True)
-    ax_fitness.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    ax_fitness.legend(loc='upper right', bbox_to_anchor=(1, 1))
 
     # Save the combined plot to a PDF file for fitness
     fig_fitness.savefig(f'{runs_path}/fitness_performance_metrics_with_error_bands.pdf', dpi=400, bbox_inches='tight')
@@ -85,11 +85,11 @@ def make_plots_from_logbook(path, runs_path):
     ax_freq.fill_between(range(len(avg_of_avg_freq)), avg_of_avg_freq - std_dev_avg_freq, avg_of_avg_freq + std_dev_avg_freq, color='green', alpha=0.2)
 
     # Styling the plot for frequency
-    ax_freq.set_title('Frequency Performance Metric with Error Bands', fontsize=24)
+    ax_freq.set_title('Frequency Performance', fontsize=20)
     ax_freq.set_xlabel('Generation', fontsize=19)
     ax_freq.set_ylabel('Frequency', fontsize=19)
     ax_freq.grid(True)
-    ax_freq.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    ax_freq.legend(loc='upper right', bbox_to_anchor=(1, 1))
 
     # Save the plot to a PDF file for frequency
     fig_freq.savefig(f'{runs_path}/frequency_performance_metric_with_error_bands.pdf', dpi=400, bbox_inches='tight')
