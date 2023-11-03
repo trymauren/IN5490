@@ -24,11 +24,11 @@ def make_plots_from_logbook(path, runs_path):
             logbook = fp[str(i)]
             logbooks.append(logbook) 
             
-    fig, (ax1, ax2) = plt.subplots(ncols=1, nrows=2, figsize=(15,10))
+    fig, (ax1, ax2, ax3) = plt.subplots(ncols=1, nrows=3, figsize=(15,10))
     for logbook in logbooks:
         fitness = logbook.chapters['fitness'].select('avg')
         max_fitness = logbook.chapters['fitness'].select('max')
-
+        avg_freq = logbook.chapters['frequency'].select('avg')
         
         # Plotting and styling for Average Fitness
         ax1.plot(fitness)
@@ -43,7 +43,13 @@ def make_plots_from_logbook(path, runs_path):
         ax2.set_xlabel('Generation', fontsize=12)
         ax2.set_ylabel('Fitness', fontsize=12)
         ax2.grid(True)
-
+        
+        ax3.plot(avg_freq)
+        ax3.set_title('Average Frequency', fontsize=14)
+        ax3.set_xlabel("Generation", fontsize=12)
+        ax3.set_ylabel('Frequency',fontsize=12)
+        ax3.grid(True)
+    plt.subplots_adjust(hspace=0.5)
     plt.savefig(f'{runs_path}/4xplot_{file_name}.pdf',dpi=300)
     print(' -- Made plots')
 
