@@ -8,13 +8,13 @@ from mlagents_envs.environment import UnityEnvironment
 
 class UnityInterface():
 
-    def __init__(self, executable_file: str = None, no_graphics: bool = True, worker_id : int = 0):
+    def __init__(self, executable_file: str = None, no_graphics: bool = False, worker_id : int = 0):
     
         self.env = self.start_env(executable_file=executable_file, no_graphics=no_graphics, worker_id=worker_id)
         self.behavior_names = list(self.env.behavior_specs.keys())
         self.num_agents = len(self.behavior_names)
 
-    def start_env(self, executable_file: str = None, no_graphics: bool = True, worker_id: int = 0) -> UnityEnvironment:
+    def start_env(self, executable_file: str = None, no_graphics: bool = False, worker_id: int = 0) -> UnityEnvironment:
         """Starting a unity environment. 
 
         Args:
@@ -57,7 +57,7 @@ class UnityInterface():
 
                 if i >= len(actions[0][0]) - 1:
                     decision_steps, _ = self.env.get_steps(self.behavior_names[action_i])
-                    positions.append(decision_steps.obs[0][0][:3]) # this works
+                    positions.append(decision_steps.obs[0][0][:3])
 
             self.env.step()
 
