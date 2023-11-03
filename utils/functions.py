@@ -29,7 +29,6 @@ def make_plots_from_logbook(path, runs_path):
     fig2, ax2 = plt.subplots()
     fig3, ax3 = plt.subplots()
 
-    # Loop over logbooks and plot the data on the same axes
     for i, logbook in enumerate(logbooks, 1):
         fitness = logbook.chapters['fitness'].select('avg')
         max_fitness = logbook.chapters['fitness'].select('max')
@@ -43,14 +42,15 @@ def make_plots_from_logbook(path, runs_path):
         
         # Plotting and styling for Average Frequency
         ax3.plot(avg_freq, label=f'Run {i}')
-        
+
+
     # Finalize and save the Average Fitness plot
     ax1.set_title('Average Fitness', fontsize=24)
     ax1.set_xlabel('Generation', fontsize=19)
     ax1.set_ylabel('Fitness', fontsize=19)
     ax1.grid(True)
-    ax1.legend()
-    plt.savefig(f'{runs_path}/avg_fitness.pdf', dpi=400)
+    ax1.legend(loc='center left', bbox_to_anchor=(1, 0.5))  # Position the legend on the right
+    fig1.savefig(f'{runs_path}/avg_fitness.pdf', dpi=400, bbox_inches='tight')  # Adjust the saving to include the legend
     plt.close(fig1)
 
     # Finalize and save the Max Fitness plot
@@ -58,8 +58,8 @@ def make_plots_from_logbook(path, runs_path):
     ax2.set_xlabel('Generation', fontsize=19)
     ax2.set_ylabel('Fitness', fontsize=19)
     ax2.grid(True)
-    ax2.legend()
-    plt.savefig(f'{runs_path}/max_fitness.pdf', dpi=400)
+    ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5))  # Position the legend on the right
+    fig2.savefig(f'{runs_path}/max_fitness.pdf', dpi=400, bbox_inches='tight')  # Adjust the saving to include the legend
     plt.close(fig2)
 
     # Finalize and save the Average Frequency plot
@@ -67,8 +67,8 @@ def make_plots_from_logbook(path, runs_path):
     ax3.set_xlabel("Generation", fontsize=19)
     ax3.set_ylabel('Frequency', fontsize=19)
     ax3.grid(True)
-    ax3.legend()
-    plt.savefig(f'{runs_path}/avg_frequency.pdf', dpi=400)
+    ax3.legend(loc='center left', bbox_to_anchor=(1, 0.5))  # Position the legend on the right
+    fig3.savefig(f'{runs_path}/avg_frequency.pdf', dpi=400, bbox_inches='tight')  # Adjust the saving to include the legend
     plt.close(fig3)
 
     print('All plots saved')
