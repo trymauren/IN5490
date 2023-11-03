@@ -25,13 +25,15 @@ def make_plots_from_logbook(path, runs_path):
             logbooks.append(logbook) 
             # print(logbook.chapters["frequency"].select("avg"))
             
-    fig, (ax1, ax2, ax3) = plt.subplots(ncols=1, nrows=3, figsize=(9,16))
+        i = 0
     for logbook in logbooks:
+        i += 1
         fitness = logbook.chapters['fitness'].select('avg')
         max_fitness = logbook.chapters['fitness'].select('max')
         avg_freq = logbook.chapters['frequency'].select('avg')
         
         # Plotting and styling for Average Fitness
+        fig1, ax1 = plt.subplots()
         ax1.plot(fitness)
         ax1.set_title('Average Fitness', fontsize=24)
         ax1.set_xlabel('Generation', fontsize=19)
@@ -39,8 +41,11 @@ def make_plots_from_logbook(path, runs_path):
         ax1.grid(True)
         ax1.tick_params(axis='x', labelsize=17)
         ax1.tick_params(axis='y', labelsize=17)
-
-        # Plotting and styling for Average Frequency
+        plt.savefig(f'{runs_path}/avg_fitness_{i}.pdf', dpi=400)
+        plt.close(fig1)  # Close the figure to free memory
+        
+        # Plotting and styling for Max Fitness
+        fig2, ax2 = plt.subplots()
         ax2.plot(max_fitness)
         ax2.set_title('Max Fitness', fontsize=24)
         ax2.set_xlabel('Generation', fontsize=19)
@@ -48,18 +53,22 @@ def make_plots_from_logbook(path, runs_path):
         ax2.grid(True)
         ax2.tick_params(axis='x', labelsize=17)
         ax2.tick_params(axis='y', labelsize=17)
+        plt.savefig(f'{runs_path}/max_fitness_{i}.pdf', dpi=400)
+        plt.close(fig2)  # Close the figure to free memory
         
+        # Plotting and styling for Average Frequency
+        fig3, ax3 = plt.subplots()
         ax3.plot(avg_freq)
         ax3.set_title('Average Frequency', fontsize=24)
         ax3.set_xlabel("Generation", fontsize=19)
-        ax3.set_ylabel('Frequency',fontsize=19)
+        ax3.set_ylabel('Frequency', fontsize=19)
         ax3.grid(True)
         ax3.tick_params(axis='x', labelsize=17)
         ax3.tick_params(axis='y', labelsize=17)
-
-    plt.subplots_adjust(hspace=0.5)
-    plt.savefig(f'{runs_path}/4xplot_{file_name}.pdf',dpi=400)
-    print(' -- Made plots')
+        plt.savefig(f'{runs_path}/avg_frequency_{i}.pdf', dpi=400)
+        plt.close(fig3)  # Close the figure to free memory
+        
+        print(f'Plot {i} saved')
 
 
 def get_halloffame_data(path):
