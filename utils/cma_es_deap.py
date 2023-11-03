@@ -57,6 +57,7 @@ def train_normal(unity_interface, runs_path, verbose=True):
 
     def signal_handler(signal, frame):
         functions.dump_data(logbooks, halloffame, runs_path)
+        unity_interface.stop_env()
         exit()
 
     import signal
