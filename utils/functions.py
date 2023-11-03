@@ -1,7 +1,7 @@
 import os
 from sys import platform
 from datetime import datetime
-import pickle
+import numpy as np
 from config import interface_config, ea_config
 from utils import fitness_evaluation, unity_stuff, cma_es_deap, basic_deap
 
@@ -23,43 +23,79 @@ def make_plots_from_logbook(path, runs_path):
         for i, d in enumerate(fp):
             logbook = fp[str(i)]
             logbooks.append(logbook) 
-            
-    fig, (ax1, ax2, ax3) = plt.subplots(ncols=1, nrows=3, figsize=(15,10))
+            # print(logbook.chapters["frequency"].select("avg"))
+                
+    # Initialize lists to store the data from all logbooks
+    all_fitness = []
+    all_max_fitness = []
+    all_avg_freq = []
+
+    # Extract the data from each logbook and append it to the lists
     for logbook in logbooks:
         fitness = logbook.chapters['fitness'].select('avg')
         max_fitness = logbook.chapters['fitness'].select('max')
         avg_freq = logbook.chapters['frequency'].select('avg')
         
-        # Plotting and styling for Average Fitness
-        ax1.plot(fitness)
-        ax1.set_title('Average Fitness', fontsize=24)
-        ax1.set_xlabel('Generation', fontsize=20)
-        ax1.set_ylabel('Fitness', fontsize=20)
-        ax1.grid(True)
-        ax1.tick_params(axis='x', labelsize=15)
-        ax1.tick_params(axis='y', labelsize=15)
+        all_fitness.append(fitness)
+        all_max_fitness.append(max_fitness)
+        all_avg_freq.append(avg_freq)
 
-        # Plotting and styling for Average Frequency
-        ax2.plot(max_fitness)
-        ax2.set_title('Max Fitness', fontsize=24)
-        ax2.set_xlabel('Generation', fontsize=20)
-        ax2.set_ylabel('Fitness', fontsize=20)
-        ax2.grid(True)
-        ax2.tick_params(axis='x', labelsize=15)
-        ax2.tick_params(axis='y', labelsize=15)
-        
-        ax3.plot(avg_freq)
-        ax3.set_title('Average Frequency', fontsize=24)
-        ax3.set_xlabel("Generation", fontsize=20)
-        ax3.set_ylabel('Frequency',fontsize=20)
-        ax3.grid(True)
-        ax3.tick_params(axis='x', labelsize=15)
-        ax3.tick_params(axis='y', labelsize=15)
+    # Convert lists to numpy arrays for computation
+    all_fitness = np.array(all_fitness)
+    all_max_fitness = np.array(all_max_fitness)
+    all_avg_freq = np.array(all_avg_freq)
 
-    plt.subplots_adjust(hspace=0.5)
-    plt.savefig(f'{runs_path}/4xplot_{file_name}.pdf',dpi=400)
-    print(' -- Made plots')
+    # Compute the average and standard deviation across all logbooks
+    avg_of_fitness = np.mean(all_fitness, axis=0)
+    std_dev_fitness = np.std(all_fitness, axis=0)
 
+    avg_of_max_fitness = np.mean(all_max_fitness, axis=0)
+    std_dev_max_fitness = np.std(all_max_fitness, axis=0)
+
+    # Compute average and standard deviation only for frequency
+    avg_of_avg_freq = np.mean(all_avg_freq, axis=0)
+    std_dev_avg_freq = np.std(all_avg_freq, axis=0)
+
+    # Create a single plot with two lines representing the averages for fitness
+    fig_fitness, ax_fitness = plt.subplots()
+
+    # Plotting each average line with error bands for fitness
+    ax_fitness.plot(avg_of_fitness, label='Average Fitness')
+    ax_fitness.fill_between(range(len(avg_of_fitness)), avg_of_fitness - std_dev_fitness, avg_of_fitness + std_dev_fitness, alpha=0.2)
+
+    ax_fitness.plot(avg_of_max_fitness, label='Max Fitness')
+    ax_fitness.fill_between(range(len(avg_of_max_fitness)), avg_of_max_fitness - std_dev_max_fitness, avg_of_max_fitness + std_dev_max_fitness, alpha=0.2)
+
+    # Styling the plot for fitness
+    ax_fitness.set_title('Fitness Performance Metrics with Error Bands', fontsize=24)
+    ax_fitness.set_xlabel('Generation', fontsize=19)
+    ax_fitness.set_ylabel('Fitness', fontsize=19)
+    ax_fitness.grid(True)
+    ax_fitness.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+    # Save the combined plot to a PDF file for fitness
+    fig_fitness.savefig(f'{runs_path}/fitness_performance_metrics_with_error_bands.pdf', dpi=400, bbox_inches='tight')
+    plt.close(fig_fitness)
+
+    # Create a single plot for average frequency
+    fig_freq, ax_freq = plt.subplots()
+
+    # Plotting the average frequency with error bands
+    ax_freq.plot(avg_of_avg_freq, label='Average Frequency', color='green')
+    ax_freq.fill_between(range(len(avg_of_avg_freq)), avg_of_avg_freq - std_dev_avg_freq, avg_of_avg_freq + std_dev_avg_freq, color='green', alpha=0.2)
+
+    # Styling the plot for frequency
+    ax_freq.set_title('Frequency Performance Metric with Error Bands', fontsize=24)
+    ax_freq.set_xlabel('Generation', fontsize=19)
+    ax_freq.set_ylabel('Frequency', fontsize=19)
+    ax_freq.grid(True)
+    ax_freq.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+    # Save the plot to a PDF file for frequency
+    fig_freq.savefig(f'{runs_path}/frequency_performance_metric_with_error_bands.pdf', dpi=400, bbox_inches='tight')
+    plt.close(fig_freq)
+
+    print('All plots saved')
 
 def get_halloffame_data(path):
     """Reads HOF data from file and visualizes the agent with highest fitness
