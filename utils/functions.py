@@ -32,25 +32,32 @@ def make_plots_from_logbook(path, runs_path):
         
         # Plotting and styling for Average Fitness
         ax1.plot(fitness)
-        ax1.set_title('Average Fitness', fontsize=14)
-        ax1.set_xlabel('Generation', fontsize=12)
-        ax1.set_ylabel('Fitness', fontsize=12)
+        ax1.set_title('Average Fitness', fontsize=24)
+        ax1.set_xlabel('Generation', fontsize=20)
+        ax1.set_ylabel('Fitness', fontsize=20)
         ax1.grid(True)
+        ax1.tick_params(axis='x', labelsize=15)
+        ax1.tick_params(axis='y', labelsize=15)
 
         # Plotting and styling for Average Frequency
         ax2.plot(max_fitness)
-        ax2.set_title('Max Fitness', fontsize=14)
-        ax2.set_xlabel('Generation', fontsize=12)
-        ax2.set_ylabel('Fitness', fontsize=12)
+        ax2.set_title('Max Fitness', fontsize=24)
+        ax2.set_xlabel('Generation', fontsize=20)
+        ax2.set_ylabel('Fitness', fontsize=20)
         ax2.grid(True)
+        ax2.tick_params(axis='x', labelsize=15)
+        ax2.tick_params(axis='y', labelsize=15)
         
         ax3.plot(avg_freq)
-        ax3.set_title('Average Frequency', fontsize=14)
-        ax3.set_xlabel("Generation", fontsize=12)
-        ax3.set_ylabel('Frequency',fontsize=12)
+        ax3.set_title('Average Frequency', fontsize=24)
+        ax3.set_xlabel("Generation", fontsize=20)
+        ax3.set_ylabel('Frequency',fontsize=20)
         ax3.grid(True)
+        ax3.tick_params(axis='x', labelsize=15)
+        ax3.tick_params(axis='y', labelsize=15)
+
     plt.subplots_adjust(hspace=0.5)
-    plt.savefig(f'{runs_path}/4xplot_{file_name}.pdf',dpi=300)
+    plt.savefig(f'{runs_path}/4xplot_{file_name}.pdf',dpi=400)
     print(' -- Made plots')
 
 
