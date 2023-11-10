@@ -63,7 +63,7 @@ def train_normal(worker_id, seed, verbose=True):
         worker_id=worker_id)
 
     def signal_handler(signal, frame):
-        functions.dump_data(logbooks, halloffame, runs_path)
+        functions.dump_data(logbook, halloffame, runs_path)
         unity_interface.stop_env()
         exit()
 
