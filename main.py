@@ -1,4 +1,4 @@
-from utils import functions
+from utils_threaded_high import functions
 import os
 import sys
 
@@ -8,7 +8,7 @@ def main():
 	runs_path = os.path.join(root,'runs/')
 
 	if 'train' in sys.argv:
-		functions.train(runs_path, executable_path)
+		functions.train(10)
   
 		if 'plot' in sys.argv:
 			functions.plot_latest(runs_path)
