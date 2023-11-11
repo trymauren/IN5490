@@ -58,7 +58,6 @@ def compute_movement(individual, num_move_directions=12) -> np.array(np.array):
 		Arg: an individual (the individual must inherit from python list).
 		Ret: np array containing movements for all moving directions of all limbs. 
 	"""
-	print('CURRENT PID', multiprocessing.current_process().pid)
 	individual = np.array(individual)
 	if ea_config['equal_frequency_all_limbs']:
 		freq = individual[-1]

@@ -1,4 +1,5 @@
 from utils_threaded_high import functions
+from config import sim_config
 import os
 import sys
 
@@ -17,7 +18,7 @@ def main():
 		functions.plot(runs_path)
 
 	if 'sim_best' in sys.argv:
-		functions.sim_best(runs_path, executable_path)
+		functions.sim_best(runs_path, executable_path, sim_config['n_agents'])
 
 if __name__ == "__main__":
     main()

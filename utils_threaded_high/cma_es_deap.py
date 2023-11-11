@@ -26,8 +26,6 @@
 #   Statistics:
 #   https://deap.readthedocs.io/en/master/tutorials/basic/part3.html
 
-
-
 from utils_threaded_high import functions, fitness_evaluation, unity_stuff
 from collections import deque
 
@@ -47,7 +45,7 @@ from config import ea_config, interface_config
 import multiprocessing
 import itertools
 
-def train_normal(worker_id, seed, verbose=True):
+def train_parallel(worker_id, seed, verbose=True):
     print(' -- Strategy: cma-es')
     
     root = os.path.abspath('')
@@ -206,8 +204,8 @@ def train_bipop(unity_interface, runs_path, verbose=True):
     nsmallpopruns = 0
     smallbudget = list()
     largebudget = list()
-    lambda0 = 4 + int(3 * np.log(N)) # population size - dynamic, dependent on individual size
-    # lambda0 = ea_config['pop_size'] # population size - static
+    # lambda0 = 4 + int(3 * np.log(N)) # population size - dynamic, dependent on individual size
+    lambda0 = ea_config['pop_size'] # population size - static
     regime = 1
     
     def signal_handler(signal, frame):
