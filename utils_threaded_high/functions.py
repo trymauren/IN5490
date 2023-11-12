@@ -2,7 +2,7 @@ import os
 from sys import platform
 from datetime import datetime
 import numpy as np
-from config import interface_config, ea_config
+from config import interface_config, ea_config, sim_config
 from utils_threaded_high import fitness_evaluation, unity_stuff, cma_es_deap, basic_deap
 
 import shelve
@@ -121,7 +121,7 @@ def get_halloffame_data(path):
             data.append(fp[str(i)])
     return data
 
-def sim_best(runs_path, executable_path):
+def sim_best(runs_path, executable_path, n_agents):
     """
     Simulate the best solution from the hall of fame.
     
@@ -139,7 +139,7 @@ def sim_best(runs_path, executable_path):
         path_to_halloffame = get_newest_halloffame(runs_path)
 
     halloffame = get_halloffame_data(path_to_halloffame)
-    exe_path = get_executable(executable_path, 1)
+    exe_path = get_executable(executable_path, n_agents)
     unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, worker_id=(interface_config['worker_id'] + 1))
     fitness_evaluation.simulate_best(halloffame, 500, unity_interface)
     
@@ -175,8 +175,8 @@ def train(runs):
     root = os.path.abspath('')
     executable_path = os.path.join(root,'executables/')
     runs_path = os.path.join(root,'runs/')
-    start_worker = 1
-    start_seed = 128
+    start_worker = interface_config['worker_id']
+    start_seed = ea_config['seed']
     logbooks, halloffames = 0,0
     worker_ids = range(start_worker, start_worker + runs)
     seeds = range(start_seed, start_seed + runs)
@@ -184,13 +184,19 @@ def train(runs):
     
 
     if ea_config['ea_type'] == 'basic':
-        with multiprocessing.Pool(runs) as pool:
-            rets = pool.starmap(basic_deap.train, args)
-    elif ea_config['ea_type'] == 'cma_es':
-        with multiprocessing.Pool(runs) as pool:
-            rets = pool.starmap(cma_es_deap.train_normal, args)
+        logbooks, halloffames = basic_deap.train()
+
     elif ea_config['ea_type'] == 'cma_es_bipop':
-        logbooks, halloffames = cma_es_deap.train_bipop(1,128)
+        logbooks, halloffames = cma_es_deap.train_bipop(interface_config['worker_id'],ea_config['seed'])
+
+    if ea_config['ea_type'] == 'basic_parallel':
+        with multiprocessing.Pool(runs) as pool:
+            rets = pool.starmap(basic_deap.train_parallel, args)
+
+    elif ea_config['ea_type'] == 'cma_es_parallel':
+        with multiprocessing.Pool(runs) as pool:
+            rets = pool.starmap(cma_es_deap.train_parallel, args)
+
     else:
         print(f' -- Invalid ea_type in config: {ea_config["ea_type"]}')
         print(f' -- Exiting')
@@ -255,9 +261,12 @@ def dump_data(logbooks, halloffame, runs_path):
         Ret: None
     """
     timestamp = get_timestamp()
-    logbook_path = os.path.join(runs_path, 'logbook_' + timestamp)
-    halloffame_path = os.path.join(runs_path, 'halloffame_' + timestamp)
-    txt_path = os.path.join(runs_path, 'config_' + timestamp)
+    dir_path = os.path.join(runs_path, timestamp)
+    if not os.path.isdir(dir_path):
+        os.makedirs(dir_path)
+    logbook_path = os.path.join(dir_path, 'logbook')
+    halloffame_path = os.path.join(dir_path, 'halloffame')
+    txt_path = os.path.join(dir_path, 'config')
     dump_logbook(logbooks, logbook_path)
     dump_halloffame(halloffame, halloffame_path)
     config_to_txt(txt_path)
@@ -285,7 +294,7 @@ def dump_halloffame(data, path):
             fp[str(i)] = d
     print(' -- Dumped halloffames')
     
-def config_to_txt(path_to_file):
+def config_to_txt(path):
     """
     Store the dictionaries from config.py in a TXT file within the specified path.
     
@@ -295,7 +304,7 @@ def config_to_txt(path_to_file):
     Returns:
         None
     """
-    with open(path_to_file, 'w') as txtfile:
+    with open(path, 'w') as txtfile:
         
         # Write ea_config entries
         txtfile.write("[ea_config]\n")
@@ -307,6 +316,13 @@ def config_to_txt(path_to_file):
         # Write interface_config entries
         txtfile.write("[interface_config]\n")
         for key, value in interface_config.items():
+            txtfile.write(f"{key}: {value}\n")
+
+        txtfile.write("\n")  # Adding a newline for separation
+        
+        # Write interface_config entries
+        txtfile.write("[sim_config]\n")
+        for key, value in sim_config.items():
             txtfile.write(f"{key}: {value}\n")
 
 

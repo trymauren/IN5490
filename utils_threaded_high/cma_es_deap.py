@@ -26,8 +26,6 @@
 #   Statistics:
 #   https://deap.readthedocs.io/en/master/tutorials/basic/part3.html
 
-
-
 from utils_threaded_high import functions, fitness_evaluation, unity_stuff
 from collections import deque
 
@@ -47,7 +45,7 @@ from config import ea_config, interface_config
 import multiprocessing
 import itertools
 
-def train_normal(worker_id, seed, verbose=True):
+def train_parallel(worker_id, seed, verbose=True):
     print(' -- Strategy: cma-es')
     
     root = os.path.abspath('')
