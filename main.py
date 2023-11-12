@@ -15,7 +15,7 @@ def main():
 			functions.plot_latest(runs_path)
    
 	if 'plot' in sys.argv:
-		functions.plot(runs_path)
+		functions.new_plot(runs_path)
 
 	if 'plot_combined' in sys.argv:
 		functions.make_combined_plots_from_logbook(runs_path)

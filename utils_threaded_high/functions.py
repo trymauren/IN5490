@@ -14,30 +14,39 @@ def make_plots_from_logbook(paths, runs_path):
     """Makes plot from data stored in logbook
 
     Args:
-        path (tulpe): path to logbook and halloffame in a tuple
+        paths (tuple): path to logbook and halloffame in a tuple
     """
+    # Initialize the plot outside the loop
+    fig_fitness, ax_fitness = plt.subplots(figsize=(3.5,2.6))
+
     for path in paths:
-        path_w_out_extension = os.path.splitext(path)[0] # important to make shelve work!
-        file_name = path_w_out_extension[path_w_out_extension.find('_2023'):][1:] # Gets the date from path
+        path_w_out_extension = os.path.splitext(path)[0]
+        file_name = path_w_out_extension[path_w_out_extension.find('_2023'):][1:]
         logbooks = []
-        
+
+        with shelve.open(path_w_out_extension, 'c') as fp:
+            for i, d in enumerate(fp):
+                logbook = fp[str(i)]
+                logbooks.append(logbook)
+
+        all_max_fitness = [logbook.chapters['fitness'].select('max') for logbook in logbooks]
+        all_max_fitness = handle_variable_lengths(all_max_fitness)
 
         avg_of_max_fitness = np.nanmean(all_max_fitness, axis=0)
         std_dev_max_fitness = np.nanstd(all_max_fitness, axis=0)
+        generations = range(len(avg_of_max_fitness))
 
-        # Create a single plot with two lines representing the averages for fitness
-        fig_fitness, ax_fitness = plt.subplots()
+        # Plot each set of fitness data on the same axes
+        ax_fitness.plot(generations, avg_of_max_fitness, label=f'{get_ea_strat(path)}')
+        ax_fitness.fill_between(generations, avg_of_max_fitness - std_dev_max_fitness, 
+                                avg_of_max_fitness + std_dev_max_fitness, alpha=0.3)
 
-
-        ax_fitness.plot(avg_of_max_fitness, label=f'{get_ea_strat(path)}')
-        ax_fitness.fill_between(range(len(avg_of_max_fitness)), avg_of_max_fitness - std_dev_max_fitness, avg_of_max_fitness + std_dev_max_fitness, alpha=0.2)
-
-        # Styling the plot for fitness
-    ax_fitness.set_title('Fitness Performance', fontsize=20)
-    ax_fitness.set_xlabel('Generation', fontsize=19)
-    ax_fitness.set_ylabel('Fitness', fontsize=19)
+    # Set titles, labels, and other properties of the plot
+    ax_fitness.set_title(f'Fitness: {get_fitness_func(path)}, Freq: {get_freq(path)}', fontsize=12)
+    ax_fitness.set_xlabel(f'Generation', fontsize=11)
+    ax_fitness.set_ylabel(f'Fitness', fontsize=11)
     ax_fitness.grid(True)
-    ax_fitness.legend(loc='upper right', bbox_to_anchor=(1, 1))
+    ax_fitness.legend(loc='upper left')
 
         # Save the combined plot to a PDF file for fitness
     fig_fitness.savefig(f'{runs_path}/fitness_performance_metrics_with_error_bands.pdf', dpi=400, bbox_inches='tight')
@@ -46,7 +55,62 @@ def make_plots_from_logbook(paths, runs_path):
     print('All plots saved')
     
 def get_ea_strat(path):
+    """Gets ea type from config.txt
+
+    Args:
+        path : path to txt
+
+    Returns:
+        str: ea_type
+    """
+    last_slash = path.rfind('/')
+    path = path[:last_slash]+'/config.txt'
     print(path)
+    with open(path, 'r') as file:
+        for line in file:
+            if line.startswith("ea_type"):
+                # Splitting the line on ':' and stripping any whitespace
+                _, value = line.split(":", 1)
+                return value.strip()
+        return "ea_type not found in the file."
+    
+def get_fitness_func(path):
+    """Gets which fitness function was used from config.txt
+
+    Args:
+        path : path to config.txt
+
+    Returns:
+        str: fitness_func
+    """
+    last_slash = path.rfind('/')
+    path = path[:last_slash]+'/config.txt'
+    with open(path, 'r') as file:
+        for line in file:
+            if line.startswith("fitness_one_axis"):
+                # Splitting the line on ':' and stripping any whitespace
+                _, value = line.split(":", 1)
+                return 'One dir' if value.strip()=="True" else 'All dir'
+        return "Fitness not found in config.tzt."
+    
+def get_freq(path):
+    """Gets which freq setting was used from config.txt
+
+    Args:
+        path : path to config.txt
+
+    Returns:
+        str: freq_setting
+    """
+    last_slash = path.rfind('/')
+    path = path[:last_slash]+'/config.txt'
+    with open(path, 'r') as file:
+        for line in file:
+            if line.startswith("equal_frequency_all_limbs"):
+                # Splitting the line on ':' and stripping any whitespace
+                _, value = line.split(":", 1)
+                return 'equal freq' if value.strip()=="True" else 'not equal freq'
+        return "Fitness not found in config.tzt."
     
 def new_plot(runs_path):
     """
@@ -58,11 +122,11 @@ def new_plot(runs_path):
     Returns:
         None
     """
-    timestamp = input('Timestamp to plot: \'enter\' to use latest, \'n\' to navigate\n')
+    timestamp = input('\'enter\' to use choose, \'q\' to quit\n')
     paths_to_logbooks = []
     while not timestamp:
         paths_to_logbooks.append(fd.askopenfilename())
-        timestamp = input('Timestamp to plot: \'enter\' to choose more, \'q\' to quit\n')
+        timestamp = input('\'enter\' to use choose, \'q\' to quit\n')
     make_plots_from_logbook(paths_to_logbooks, runs_path)
     
 
@@ -173,7 +237,7 @@ def get_halloffame_data(path):
             data.append(fp[str(i)])
     return data
 
-def sim_best(runs_path, executable_path):
+def sim_best(runs_path, executable_path, n_agents):
     """
     Simulate the best solution from the hall of fame.
     
@@ -191,11 +255,10 @@ def sim_best(runs_path, executable_path):
         path_to_halloffame = get_newest_halloffame(runs_path)
 
     halloffame = get_halloffame_data(path_to_halloffame)
-    exe_path = get_executable(executable_path, pop_size=len(halloffame))
+    exe_path = get_executable(executable_path, n_agents)
     unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, worker_id=(interface_config['worker_id'] + 1))
-    fitness_evaluation.simulate_best(halloffame, unity_interface)
-    unity_interface.stop_env()
-
+    fitness_evaluation.simulate_best(halloffame, 500, unity_interface)
+    
 def plot(runs_path):
     """
     Plot the results based on a given timestamp or the latest results.
@@ -236,7 +299,6 @@ def train(runs):
     args = zip(worker_ids, seeds)
     
 
-
     if ea_config['ea_type'] == 'basic':
         logbooks, halloffames = basic_deap.train()
 
@@ -244,7 +306,7 @@ def train(runs):
         logbooks, halloffames = cma_es_deap.train_bipop(interface_config['worker_id'],ea_config['seed'])
 
     if ea_config['ea_type'] == 'basic_parallel':
-        with multiprocessing.Pool() as pool:
+        with multiprocessing.Pool(runs) as pool:
             rets = pool.starmap(basic_deap.train_parallel, args)
 
     elif ea_config['ea_type'] == 'cma_es_parallel':
@@ -323,7 +385,7 @@ def dump_data(logbooks, halloffame, runs_path):
     txt_path = os.path.join(dir_path, 'config.txt')
     dump_logbook(logbooks, logbook_path)
     dump_halloffame(halloffame, halloffame_path)
-    config_to_txt(txt_path)
+    config_to_txt(txt_path, timestamp)
 
 def dump_logbook(data, path):
     """
@@ -348,7 +410,7 @@ def dump_halloffame(data, path):
             fp[str(i)] = d
     print(' -- Dumped halloffames')
     
-def config_to_txt(path):
+def config_to_txt(path, timestamp):
     """
     Store the dictionaries from config.py in a TXT file within the specified path.
     
@@ -359,7 +421,9 @@ def config_to_txt(path):
         None
     """
     with open(path, 'w') as txtfile:
-        
+        #write timestamp to config so it can be accessed later
+        txtfile.write(f"Timestamp: {timestamp}\n")
+        txtfile.write("[Timestamp]\n")
         # Write ea_config entries
         txtfile.write("[ea_config]\n")
         for key, value in ea_config.items():
