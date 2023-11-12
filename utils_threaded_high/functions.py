@@ -16,6 +16,7 @@ def make_plots_from_logbook(path, runs_path):
     Args:
         path (tulpe): path to logbook and halloffame in a tuple
     """
+
     path_w_out_extension = os.path.splitext(path)[0] # important to make shelve work!
     file_name = path_w_out_extension[path_w_out_extension.find('_2023'):][1:] # Gets the date from path
     logbooks = []
@@ -68,9 +69,9 @@ def make_plots_from_logbook(path, runs_path):
     ax_fitness.fill_between(range(len(avg_of_max_fitness)), avg_of_max_fitness - std_dev_max_fitness, avg_of_max_fitness + std_dev_max_fitness, alpha=0.2)
 
     # Styling the plot for fitness
-    ax_fitness.set_title('Fitness Performance', fontsize=20)
-    ax_fitness.set_xlabel('Generation', fontsize=19)
-    ax_fitness.set_ylabel('Fitness', fontsize=19)
+    ax_fitness.set_title('Fitness Performance', fontsize=12)
+    ax_fitness.set_xlabel('Generation', fontsize=12)
+    ax_fitness.set_ylabel('Fitness', fontsize=12)
     ax_fitness.grid(True)
     ax_fitness.legend(loc='upper right', bbox_to_anchor=(1, 1))
 
@@ -98,6 +99,98 @@ def make_plots_from_logbook(path, runs_path):
 
     print('All plots saved')
 
+
+def make_combined_plots_from_logbook(runs_path):
+
+    
+    # path_w_out_extension = os.path.splitext(path)[0] # important to make shelve work!
+    # file_name = path_w_out_extension[path_w_out_extension.find('_2023'):][1:] # Gets the date from path
+    
+    filenames = []
+
+    cont = 'n'
+    while cont == 'n':
+        filenames.append(os.path.splitext(fd.askopenfilename())[0])
+        cont = input('n to continue')
+
+    fig = plt.figure()
+    for filename in filenames:  
+        logbooks = []
+        with shelve.open(filename, 'c') as fp: 
+            for i, d in enumerate(fp):
+                logbook = fp[str(i)]
+                logbooks.append(logbook) 
+                # print(logbook.chapters["frequency"].select("avg"))
+                    
+        # Initialize lists to store the data from all logbooks
+        all_fitness = []
+        all_max_fitness = []
+        all_avg_freq = []
+
+        # Extract the data from each logbook and append it to the lists
+        for logbook in logbooks:
+            fitness = logbook.chapters['fitness'].select('avg')
+            max_fitness = logbook.chapters['fitness'].select('max')
+            # avg_freq = logbook.chapters['frequency'].select('avg')
+            
+            all_fitness.append(fitness)
+            all_max_fitness.append(max_fitness)
+            # all_avg_freq.append(avg_freq)
+
+        # Convert lists to numpy arrays for computation
+        all_fitness = np.array(all_fitness)
+        all_max_fitness = np.array(all_max_fitness)
+        # all_avg_freq = np.array(all_avg_freq)
+
+        # Compute the average and standard deviation across all logbooks
+        avg_of_fitness = np.mean(all_fitness, axis=0)
+        std_dev_fitness = np.std(all_fitness, axis=0)
+
+        avg_of_max_fitness = np.mean(all_max_fitness, axis=0)
+        std_dev_max_fitness = np.std(all_max_fitness, axis=0)
+
+        # # Compute average and standard deviation only for frequency
+        # avg_of_avg_freq = np.mean(all_avg_freq, axis=0)
+        # std_dev_avg_freq = np.std(all_avg_freq, axis=0)
+
+        sub_label = input('Input label\n')
+        # Plotting each average line with error bands for fitness
+        plt.plot(avg_of_fitness, label=f'Average Fitness {sub_label}')
+        plt.fill_between(range(len(avg_of_fitness)), avg_of_fitness - std_dev_fitness, avg_of_fitness + std_dev_fitness, alpha=0.2)
+
+        plt.plot(avg_of_max_fitness, label=f'Max Fitness {sub_label}')
+        plt.fill_between(range(len(avg_of_max_fitness)), avg_of_max_fitness - std_dev_max_fitness, avg_of_max_fitness + std_dev_max_fitness, alpha=0.2)
+
+        # Styling the plot for fitness
+        plt.title('Fitness Performance', fontsize=12)
+        plt.xlabel('Generation', fontsize=12)
+        plt.ylabel('Fitness', fontsize=12)
+        plt.grid(True)
+        plt.legend(loc='upper right', bbox_to_anchor=(1, 1))
+
+        # Save the combined plot to a PDF file for fitness
+        plt.savefig(f'{runs_path}/fitness_performance_metrics_with_error_bands.pdf', dpi=400, bbox_inches='tight')
+        plt.close(fig)
+
+        # # Create a single plot for average frequency
+        # fig_freq, ax_freq = plt.subplots()
+
+        # # Plotting the average frequency with error bands
+        # ax_freq.plot(avg_of_avg_freq, label='Average Frequency', color='green')
+        # ax_freq.fill_between(range(len(avg_of_avg_freq)), avg_of_avg_freq - std_dev_avg_freq, avg_of_avg_freq + std_dev_avg_freq, color='green', alpha=0.2)
+
+        # # Styling the plot for frequency
+        # ax_freq.set_title('Frequency Performance', fontsize=20)
+        # ax_freq.set_xlabel('Generation', fontsize=19)
+        # ax_freq.set_ylabel('Frequency', fontsize=19)
+        # ax_freq.grid(True)
+        # ax_freq.legend(loc='upper right', bbox_to_anchor=(1, 1))
+
+    # Save the plot to a PDF file for frequency
+    sub_title = input('Input title for plot\n')
+    plt.savefig(f'{runs_path}/sub_title.pdf', dpi=400, bbox_inches='tight')
+    print('All plots saved')
+
 def get_halloffame_data(path):
     """Reads HOF data from file and visualizes the agent with highest fitness
 
@@ -115,7 +208,7 @@ def get_halloffame_data(path):
             data.append(fp[str(i)])
     return data
 
-def sim_best(runs_path, executable_path, n_agents):
+def sim_best(runs_path, executable_path):
     """
     Simulate the best solution from the hall of fame.
     
@@ -133,10 +226,11 @@ def sim_best(runs_path, executable_path, n_agents):
         path_to_halloffame = get_newest_halloffame(runs_path)
 
     halloffame = get_halloffame_data(path_to_halloffame)
-    exe_path = get_executable(executable_path, n_agents)
+    exe_path = get_executable(executable_path, pop_size=len(halloffame))
     unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, worker_id=(interface_config['worker_id'] + 1))
-    fitness_evaluation.simulate_best(halloffame, 500, unity_interface)
-    
+    fitness_evaluation.simulate_best(halloffame, unity_interface)
+    unity_interface.stop_env()
+
 def plot(runs_path):
     """
     Plot the results based on a given timestamp or the latest results.
@@ -177,6 +271,7 @@ def train(runs):
     seeds = range(start_seed, start_seed + runs)
     args = zip(worker_ids, seeds)
 
+
     if ea_config['ea_type'] == 'basic':
         logbooks, halloffames = basic_deap.train()
 
@@ -184,7 +279,7 @@ def train(runs):
         logbooks, halloffames = cma_es_deap.train_bipop(interface_config['worker_id'],ea_config['seed'])
 
     if ea_config['ea_type'] == 'basic_parallel':
-        with multiprocessing.Pool(runs) as pool:
+        with multiprocessing.Pool() as pool:
             rets = pool.starmap(basic_deap.train_parallel, args)
 
     elif ea_config['ea_type'] == 'cma_es_parallel':

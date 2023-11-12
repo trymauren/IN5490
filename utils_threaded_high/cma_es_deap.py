@@ -57,7 +57,6 @@ def train_parallel(worker_id, seed, verbose=True):
     exe_path = functions.get_executable(executable_path, ea_config['pop_size'])
     unity_interface = unity_stuff.UnityInterface(
         executable_file=exe_path,
-        no_graphics=interface_config['no_graphics'],
         worker_id=worker_id)
 
     def signal_handler(signal, frame):
@@ -164,6 +163,8 @@ def train_bipop(unity_interface, runs_path, verbose=True):
     NRESTARTS = ea_config['num_restarts']  # Initialization + 9 I-POP restarts
     SIGMA0 = int(ea_config['upper_start_limit'])/5    # 1/5th of the domain [-5 5]
     N = ea_config['genome_len']
+    lower_start_limit = ea_config['lower_start_limit']
+    upper_start_limit = ea_config['upper_start_limit']
     toolbox = base.Toolbox()
     # print(np.random.uniform(ea_config['lower_start_limit'], ea_config['upper_start_limit'], N))
     # exit()
@@ -256,7 +257,7 @@ def train_bipop(unity_interface, runs_path, verbose=True):
         mins = deque(maxlen=TOLHISTFUN_ITER)
 
         # We start with a centroid in [-4, 4]**D
-        strategy = cma.Strategy(centroid=np.random.uniform(ea_config['lower_start_limit'], ea_config['upper_start_limit'], N), sigma=sigma, lambda_=lambda_)
+        strategy = cma.Strategy(centroid=np.random.uniform(lower_start_limit, upper_start_limit, N), sigma=sigma, lambda_=lambda_)
         toolbox.register('generate', strategy.generate, creator.Individual)
         toolbox.register('update', strategy.update)
 
