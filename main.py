@@ -15,7 +15,7 @@ def main():
 			functions.plot_latest(runs_path)
    
 	if 'plot' in sys.argv:
-		functions.plot(runs_path)
+		functions.new_plot(runs_path)
 
 	if 'sim_best' in sys.argv:
 		functions.sim_best(runs_path, executable_path, sim_config['n_agents'])
