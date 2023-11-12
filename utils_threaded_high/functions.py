@@ -10,94 +10,61 @@ import matplotlib.pyplot as plt
 from tkinter import filedialog as fd
 import multiprocessing
 
-def make_plots_from_logbook(path, runs_path):
+def make_plots_from_logbook(paths, runs_path):
     """Makes plot from data stored in logbook
 
     Args:
         path (tulpe): path to logbook and halloffame in a tuple
     """
-
-    path_w_out_extension = os.path.splitext(path)[0] # important to make shelve work!
-    file_name = path_w_out_extension[path_w_out_extension.find('_2023'):][1:] # Gets the date from path
-    logbooks = []
-    
-    with shelve.open(path_w_out_extension, 'c') as fp: 
-        for i, d in enumerate(fp):
-            logbook = fp[str(i)]
-            logbooks.append(logbook) 
-            # print(logbook.chapters["frequency"].select("avg"))
-                
-    # Initialize lists to store the data from all logbooks
-    all_fitness = []
-    all_max_fitness = []
-    all_avg_freq = []
-
-    # Extract the data from each logbook and append it to the lists
-    for logbook in logbooks:
-        fitness = logbook.chapters['fitness'].select('avg')
-        max_fitness = logbook.chapters['fitness'].select('max')
-        avg_freq = logbook.chapters['frequency'].select('avg')
+    for path in paths:
+        path_w_out_extension = os.path.splitext(path)[0] # important to make shelve work!
+        file_name = path_w_out_extension[path_w_out_extension.find('_2023'):][1:] # Gets the date from path
+        logbooks = []
         
-        all_fitness.append(fitness)
-        all_max_fitness.append(max_fitness)
-        all_avg_freq.append(avg_freq)
 
-    # Convert lists to numpy arrays for computation
-    all_fitness = np.array(all_fitness)
-    all_max_fitness = np.array(all_max_fitness)
-    all_avg_freq = np.array(all_avg_freq)
+        avg_of_max_fitness = np.nanmean(all_max_fitness, axis=0)
+        std_dev_max_fitness = np.nanstd(all_max_fitness, axis=0)
 
-    # Compute the average and standard deviation across all logbooks
-    avg_of_fitness = np.mean(all_fitness, axis=0)
-    std_dev_fitness = np.std(all_fitness, axis=0)
+        # Create a single plot with two lines representing the averages for fitness
+        fig_fitness, ax_fitness = plt.subplots()
 
-    avg_of_max_fitness = np.mean(all_max_fitness, axis=0)
-    std_dev_max_fitness = np.std(all_max_fitness, axis=0)
 
-    # Compute average and standard deviation only for frequency
-    avg_of_avg_freq = np.mean(all_avg_freq, axis=0)
-    std_dev_avg_freq = np.std(all_avg_freq, axis=0)
+        ax_fitness.plot(avg_of_max_fitness, label=f'{get_ea_strat(path)}')
+        ax_fitness.fill_between(range(len(avg_of_max_fitness)), avg_of_max_fitness - std_dev_max_fitness, avg_of_max_fitness + std_dev_max_fitness, alpha=0.2)
 
-    # Create a single plot with two lines representing the averages for fitness
-    fig_fitness, ax_fitness = plt.subplots()
-
-    # Plotting each average line with error bands for fitness
-    ax_fitness.plot(avg_of_fitness, label='Average Fitness')
-    ax_fitness.fill_between(range(len(avg_of_fitness)), avg_of_fitness - std_dev_fitness, avg_of_fitness + std_dev_fitness, alpha=0.2)
-
-    ax_fitness.plot(avg_of_max_fitness, label='Max Fitness')
-    ax_fitness.fill_between(range(len(avg_of_max_fitness)), avg_of_max_fitness - std_dev_max_fitness, avg_of_max_fitness + std_dev_max_fitness, alpha=0.2)
-
-    # Styling the plot for fitness
-    ax_fitness.set_title('Fitness Performance', fontsize=12)
-    ax_fitness.set_xlabel('Generation', fontsize=12)
-    ax_fitness.set_ylabel('Fitness', fontsize=12)
+        # Styling the plot for fitness
+    ax_fitness.set_title('Fitness Performance', fontsize=20)
+    ax_fitness.set_xlabel('Generation', fontsize=19)
+    ax_fitness.set_ylabel('Fitness', fontsize=19)
     ax_fitness.grid(True)
     ax_fitness.legend(loc='upper right', bbox_to_anchor=(1, 1))
 
-    # Save the combined plot to a PDF file for fitness
+        # Save the combined plot to a PDF file for fitness
     fig_fitness.savefig(f'{runs_path}/fitness_performance_metrics_with_error_bands.pdf', dpi=400, bbox_inches='tight')
     plt.close(fig_fitness)
 
-    # Create a single plot for average frequency
-    fig_freq, ax_freq = plt.subplots()
-
-    # Plotting the average frequency with error bands
-    ax_freq.plot(avg_of_avg_freq, label='Average Frequency', color='green')
-    ax_freq.fill_between(range(len(avg_of_avg_freq)), avg_of_avg_freq - std_dev_avg_freq, avg_of_avg_freq + std_dev_avg_freq, color='green', alpha=0.2)
-
-    # Styling the plot for frequency
-    ax_freq.set_title('Frequency Performance', fontsize=20)
-    ax_freq.set_xlabel('Generation', fontsize=19)
-    ax_freq.set_ylabel('Frequency', fontsize=19)
-    ax_freq.grid(True)
-    ax_freq.legend(loc='upper right', bbox_to_anchor=(1, 1))
-
-    # Save the plot to a PDF file for frequency
-    fig_freq.savefig(f'{runs_path}/frequency_performance_metric_with_error_bands.pdf', dpi=400, bbox_inches='tight')
-    plt.close(fig_freq)
-
     print('All plots saved')
+    
+def get_ea_strat(path):
+    print(path)
+    
+def new_plot(runs_path):
+    """
+    Plot the results of different algorithms.
+    
+    Args:
+        runs_path (str): Path to the directory where simulation runs are stored.
+        
+    Returns:
+        None
+    """
+    timestamp = input('Timestamp to plot: \'enter\' to use latest, \'n\' to navigate\n')
+    paths_to_logbooks = []
+    while not timestamp:
+        paths_to_logbooks.append(fd.askopenfilename())
+        timestamp = input('Timestamp to plot: \'enter\' to choose more, \'q\' to quit\n')
+    make_plots_from_logbook(paths_to_logbooks, runs_path)
+    
 
 
 def make_combined_plots_from_logbook(runs_path):
@@ -251,11 +218,10 @@ def plot(runs_path):
 
 def train(runs):
     """
-    Train the simulation using CMA-ES (Covariance Matrix Adaptation Evolution Strategy).
+    Train the simulation using a basic EA, CMA-ES or bi-pop CMA-ES.
     
     Args:
-        runs_path (str): Path to the directory where simulation runs are stored.
-        executable_path (str): Path to the executable file.
+        runs (int): Number of times to run the evolution
         
     Returns:
         None
@@ -270,6 +236,7 @@ def train(runs):
     worker_ids = range(start_worker, start_worker + runs)
     seeds = range(start_seed, start_seed + runs)
     args = zip(worker_ids, seeds)
+    
 
 
     if ea_config['ea_type'] == 'basic':
@@ -355,7 +322,7 @@ def dump_data(logbooks, halloffame, runs_path):
         os.makedirs(dir_path)
     logbook_path = os.path.join(dir_path, 'logbook')
     halloffame_path = os.path.join(dir_path, 'halloffame')
-    txt_path = os.path.join(dir_path, 'config')
+    txt_path = os.path.join(dir_path, 'config.txt')
     dump_logbook(logbooks, logbook_path)
     dump_halloffame(halloffame, halloffame_path)
     config_to_txt(txt_path)
@@ -416,6 +383,16 @@ def config_to_txt(path):
 
 
 ### --- Helpers --- ###
+def uniform_length_check(lst):
+    return all(len(item) == len(lst[0]) for item in lst)
+
+def handle_variable_lengths(lst):
+    if uniform_length_check(lst):
+        return np.array(lst)
+    else:
+        # Handling variable lengths, option 1: Use dtype='object'
+         return np.array(lst, dtype='object')
+
 def get_timestamp():
     """Gets time of when function is called
 

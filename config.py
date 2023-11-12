@@ -1,6 +1,4 @@
 ea_config = {
-'ea_type'						: 'basic',
-# 'ea_type'						: 'basic_parallel',
 # 'ea_type'						: 'cma_es_bipop',
 # 'ea_type'						: 'cma_es_parallel',
 'pop_size'						: 900, 		# not appliccable for bipop

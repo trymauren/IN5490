@@ -3,6 +3,7 @@ from config import ea_config
 from utils_threaded_high import unity_stuff
 
 # Python modules
+import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 import time
@@ -18,12 +19,13 @@ def evaluate_population(population, unity_interface) -> None:
 	"""
 	num_agents = unity_interface.get_agents()
 	fitnesses = [0]*len(population)
+	print(num_agents)
 	for i in range(0, len(population), num_agents):
 		subset = population[i:i+num_agents]
 		fitnesses[i:i+num_agents] = evaluate_group(subset, unity_interface)
 	return fitnesses
 
-def evaluate_group(group, unity_interface=None, repetitions=ea_config['num_mov_repeat']) -> tuple:
+def evaluate_group(group, unity_interface=None) -> tuple:
 	"""
 	Evaluates the fitness of an individuals genes. Used by DEAP.
 		Arg: individual
@@ -32,9 +34,7 @@ def evaluate_group(group, unity_interface=None, repetitions=ea_config['num_mov_r
 	all_movements = []
 	for i in range(len(group)):
 		movement = compute_movement(group[i])
-		# movement_rep = repeat_movement(movement, repetitions)
-		movement_rep = movement
-		all_movements.append(movement_rep)
+		all_movements.append(movement)
 
 	if unity_interface != None:
 		coordinates = unity_interface.send_actions_to_unity(all_movements)
@@ -76,7 +76,7 @@ def compute_movement(individual, num_move_directions=12) -> np.array(np.array):
 		limbs = list(np.array_split(individual[:-1],num_move_directions))
 		movement = [0]*len(limbs)
 		for i in range(len(limbs)):
-			sinusoid = compute_sin(*(limbs[i]), freq)
+			sinusoid = my_sin(*(limbs[i]), f=freq)
 			movement[i] = sinusoid
 		return np.asarray(movement)
 
@@ -84,35 +84,16 @@ def compute_movement(individual, num_move_directions=12) -> np.array(np.array):
 		limbs = list(np.array_split(individual,num_move_directions))
 		movement = [0]*len(limbs)
 		for i in range(len(limbs)):
-			sinusoid = compute_sin(*(limbs[i]))
+			sinusoid = my_sin(*(limbs[i]))
 			movement[i] = sinusoid
 		return np.asarray(movement)
 
-def repeat_movement(movement, repetitions, num_move_directions=12, num_movements=10):
-	"""Repeat the movement from a given list [1,2,3]*2 --> [1,2,3,1,2,3] 
-	Args:
-		movement (np.array): movement to repeat
-		repetitions (int): num rep
-		num_move_directions (int, optional): _description_. Defaults to 12.
-		num_movements (int, optional): _description_. Defaults to 10.
-	Returns:
-		_type_: _description_
-	"""
-	movement_rep = np.zeros((num_move_directions,num_movements*repetitions))
-	for i in range(num_move_directions):
-		movement_rep[i] = np.tile(movement[i], repetitions)	
-	return movement_rep
 
-def compute_sin(A=1, phase=0, f=2) -> np.array:
-	"""
-	Computes a sinusoid for the given parameters.
-		Arg: A: amplitude, f: frequency, phase: phase
-		Ret: sinusoid-signal
-	"""
-	# t = np.array([0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1], dtype=float)
-	t = np.linspace(0,10,500)
-	sinusoid = A*np.sin(2 * np.pi * t * f + phase)
-	return sinusoid
+def my_sin(A, phase, f):
+    t = np.linspace(0, 4, 2000, endpoint=False) #periode på 500 - det vi vil ha
+    return A*np.sin(2*np.pi*f*t+phase)[:500]
+
+
 
 def simulate_best(group: np.array, unity_interface) -> None:
 	"""Simulate a singe individ with one crwaler 

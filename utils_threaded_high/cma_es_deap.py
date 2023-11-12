@@ -205,7 +205,7 @@ def train_bipop(unity_interface, runs_path, verbose=True):
     nsmallpopruns = 0
     smallbudget = list()
     largebudget = list()
-    # lambda0 = 4 + int(3 * np.log(N)) # population size - dynamic, dependent on individual size
+    #lambda0 = 4 + int(3 * np.log(N)) # population size - dynamic, dependent on individual size
     lambda0 = ea_config['pop_size'] # population size - static
     regime = 1
     
