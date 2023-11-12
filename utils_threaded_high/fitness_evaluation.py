@@ -47,8 +47,19 @@ def evaluate_group(group, unity_interface=None) -> tuple:
 		else:
 			fit = np.sqrt(coordinates[j][0]**2 + coordinates[j][2]**2) # rewards walking far
 
-		fitness.append((fit,)) # must add tuple to list! why: https://deap.readthedocs.io/en/master/overview.html
-	return fitness 
+		fitness.append(fit) # must add tuple to list! why: https://deap.readthedocs.io/en/master/overview.html
+
+	fitnesses_as_tuple = []
+
+	for i in range(len(fitness)):
+		penalty_accumulated = 0
+		for entry in group[i]: # for entry in individual
+			if entry < 0:
+				penalty_accumulated += entry
+		fitnesses_as_tuple.append((fitness[i] + penalty_accumulated),)
+	print(fitness)
+	print(fitnesses_as_tuple)
+	return fitnesses_as_tuple
 #[[array([ 3.6873782, -0.7602028,  0.4305477], dtype=float32)], [array([ 3.8278027 , -0.57440406,  1.8399124], dtype=float32)], ]
 
 
@@ -84,7 +95,7 @@ def my_sin(A, phase, f):
 
 
 
-def simulate_best(individual: np.array, repetitions : int, unity_interface) -> None:
+def simulate_best(group: np.array, unity_interface) -> None:
 	"""Simulate a singe individ with one crwaler 
 
 	Args:
@@ -94,5 +105,29 @@ def simulate_best(individual: np.array, repetitions : int, unity_interface) -> N
 	Returns:
 		None 
 	"""
-	evaluate_group(individual, unity_interface, repetitions)
+	all_movements = []
+	for i in range(len(group)):
+		movement = compute_best_movement(group[i][0])
+		all_movements.append(movement)
 
+	coordinates = unity_interface.send_actions_to_unity(all_movements)
+
+
+def compute_best_movement(individual, num_move_directions=12):
+
+	individual = np.array(individual)
+	if ea_config['equal_frequency_all_limbs']:
+		freq = individual[-1]
+		limbs = list(np.array_split(individual[:-1],num_move_directions))
+		movement = [0]*len(limbs)
+		for i in range(len(limbs)):
+			sinusoid = compute_sin(*(limbs[i]), freq)
+			movement[i] = sinusoid
+		return np.asarray(movement)
+	else:
+		limbs = list(np.array_split(individual,num_move_directions))
+		movement = [0]*len(limbs)
+		for i in range(len(limbs)):
+			sinusoid = compute_sin(*(limbs[i]))
+			movement[i] = sinusoid
+		return np.asarray(movement)

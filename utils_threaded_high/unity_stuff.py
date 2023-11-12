@@ -37,19 +37,18 @@ def get_worker_id() -> int:
         pid = np.random.randint(HIGHEST_WORKER_ID)
     return pid
 
-def get_env(no_graphics:bool=True, path_to_unity_exec:str=None):
+def get_env(path_to_unity_exec:str=None):
     
     global env
     pid = multiprocessing.Process()._identity[0]
 
     if (env == None):
-        print('FØØØØØØØØØØKK')
         worker_id = get_worker_id()
         #print(f"Opening Unity at '{path_to_unity_exec}', will try to use socket {worked_id} ({worked_id})")
         env = UnityEnvironment( 
                                 seed=interface_config['seed'],
                                 file_name=path_to_unity_exec,
-                                no_graphics=no_graphics,
+                                no_graphics=interface_config['no_graphics'],
                                 worker_id=worker_id
                                 )
         env.reset()
@@ -64,52 +63,50 @@ def close_env():
         channel = None
 # Frank end
 
-def evaluate_in_unity(actions) -> list:
+def evaluate_in_unity(actions, n_duplicates=1) -> list:
     root = os.path.abspath('')
     executable_path = os.path.join(root,'executables/')
     runs_path = os.path.join(root,'runs/')
 
+    global env
 
-    env = get_env(
-                    no_graphics=interface_config['no_graphics'],
-                    path_to_unity_exec=functions.get_executable(executable_path)
-                    )
+    for _ in range(n_duplicates):
 
-    env.reset()
-    behavior_names = list(env.behavior_specs.keys())
-    print("lolol")
-    print(len(behavior_names))
-    num_agents = len(behavior_names)
+        env = get_env(path_to_unity_exec=functions.get_executable(executable_path))
 
-    if len(actions) > num_agents:
-        print(f"Need more agents, training with {num_agents} agents and {len(actions)} actions")
-    positions = []
-    # Looping over number of movements to evaluate
-    #so the crwaler falls down to it start position 
-    for i in range(30):
-        env.step()
+        env.reset()
+        behavior_names = list(env.behavior_specs.keys())
+        num_agents = len(behavior_names)
 
-    for i in range(len(actions[0][0])): # for 10 or 200
+        if len(actions) > num_agents:
+            print(f"Need more agents, training with {num_agents} agents and {len(actions)} actions")
+        positions = []
+        # Looping over number of movements to evaluate
+        #so the crwaler falls down to it start position 
+        for i in range(30):
+            env.step()
 
-        # Looping over all actions (one for each agent) to evaluate
-        # - one action is composed of many movements
-        for action_i, individual in enumerate(actions): # for 30 agents
-            
-            # Shape the sequence of movements
-            step = np.array([np.array([movement_dir[i] for movement_dir in individual])]) # for 12
+        for i in range(len(actions[0][0])): # for 10 or 200
 
-            # Creates a datastructure that Unity understands
-            action_tuple = ActionTuple()
-            action_tuple.add_continuous(step)
+            # Looping over all actions (one for each agent) to evaluate
+            # - one action is composed of many movements
+            for action_i, individual in enumerate(actions): # for 30 agents
+                
+                # Shape the sequence of movements
+                step = np.array([np.array([movement_dir[i] for movement_dir in individual])]) # for 12
 
-            # Sets actions for all agents in a behavior name.
-            env.set_actions(behavior_names[action_i], action_tuple) 
+                # Creates a datastructure that Unity understands
+                action_tuple = ActionTuple()
+                action_tuple.add_continuous(step)
 
-            if i >= len(actions[0][0]) - 1:
-                decision_steps, _ = env.get_steps(behavior_names[action_i])
-                positions.append(decision_steps.obs[0][0][:3])
+                # Sets actions for all agents in a behavior name.
+                env.set_actions(behavior_names[action_i], action_tuple) 
 
-        env.step()
+                if i >= len(actions[0][0]) - 1:
+                    decision_steps, _ = env.get_steps(behavior_names[action_i])
+                    positions.append(decision_steps.obs[0][0][:3])
+
+            env.step()
 
     return positions
 
@@ -117,12 +114,10 @@ class UnityInterface():
 
     def __init__(   self,
                     executable_file: str = None,
-                    no_graphics: bool = False,
                     worker_id : int = 0
                     ):
     
         self.env = self.start_env(  executable_file=executable_file,
-                                    no_graphics=no_graphics,
                                     worker_id=worker_id
                                     )
 
@@ -131,7 +126,6 @@ class UnityInterface():
 
     def start_env(  self,
                     executable_file: str = None,
-                    no_graphics: bool = False,
                     worker_id: int = 0
                     ) -> UnityEnvironment:
         """Starting a unity environment. 
@@ -143,7 +137,7 @@ class UnityInterface():
         """
         env = UnityEnvironment( seed=interface_config['seed'],
                                 file_name=executable_file,
-                                no_graphics=False,
+                                no_graphics=interface_config['no_graphics'],
                                 worker_id=worker_id,
                                 log_folder='./')
         env.reset()
@@ -151,7 +145,7 @@ class UnityInterface():
 
     def send_actions_to_unity(self, actions: np.array) -> list:
         
-        self.env.reset()
+        self.env.reset() 
         
         if len(actions) > self.num_agents:
             print(f"Need more agents, training with {self.num_agents} \

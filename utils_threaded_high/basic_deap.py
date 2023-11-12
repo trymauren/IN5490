@@ -26,7 +26,6 @@ def train(verbose=True):
 
     unity_interface = unity_stuff.UnityInterface(
         executable_file=executable_path,
-        no_graphics=interface_config['no_graphics'],
         worker_id=interface_config['worker_id']
         )
     def signal_handler(signal, frame):
@@ -134,7 +133,6 @@ def train_parallel(worker_id, seed, verbose=True):
     executable_path = functions.get_executable(exe_path, ea_config['pop_size'])
     unity_interface = unity_stuff.UnityInterface(
         executable_file=executable_path,
-        no_graphics=interface_config['no_graphics'],
         worker_id=worker_id
         )
 
