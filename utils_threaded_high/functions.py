@@ -42,6 +42,7 @@ def make_plots_from_logbook(path, runs_path):
         all_avg_freq.append(avg_freq)
 
     # Convert lists to numpy arrays for computation
+    # Convert lists to numpy arrays for computation
     a = [indfit for subfit in all_max_fitness for indfit in subfit]
     print(np.shape(a))
     all_max_fitness = handle_variable_lengths(all_max_fitness)
