@@ -1,8 +1,8 @@
 ea_config = {
-'ea_type'						: 'cma_es_bipop',
-# 'ea_type'						: 'cma_es',
+# 'ea_type'						: 'cma_es_bipop',
+ 'ea_type'						: 'cma_es',
 # 'ea_type'						: 'basic',
-'pop_size'						: 180,
+'pop_size'						: 60,
 'num_generations'				: 100,
 'std_dev'						: 3,
 'genome_len'					: 36,
