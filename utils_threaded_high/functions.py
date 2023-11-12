@@ -79,16 +79,14 @@ def make_combined_plots_from_logbook(runs_path):
     while cont == 'n':
         filenames.append(os.path.splitext(fd.askopenfilename())[0])
         cont = input('n to continue')
-
-    fig = plt.figure()
+    fig = plt.figure(figsize=(15,9))
     for filename in filenames:  
         logbooks = []
         with shelve.open(filename, 'c') as fp: 
             for i, d in enumerate(fp):
                 logbook = fp[str(i)]
                 logbooks.append(logbook) 
-                # print(logbook.chapters["frequency"].select("avg"))
-                    
+                # print(logbook.chapters["frequency"].select("avg"))               
         # Initialize lists to store the data from all logbooks
         all_fitness = []
         all_max_fitness = []
@@ -129,15 +127,15 @@ def make_combined_plots_from_logbook(runs_path):
         plt.fill_between(range(len(avg_of_max_fitness)), avg_of_max_fitness - std_dev_max_fitness, avg_of_max_fitness + std_dev_max_fitness, alpha=0.2)
 
         # Styling the plot for fitness
-        plt.title('Fitness Performance', fontsize=12)
-        plt.xlabel('Generation', fontsize=12)
-        plt.ylabel('Fitness', fontsize=12)
-        plt.grid(True)
-        plt.legend(loc='upper right', bbox_to_anchor=(1, 1))
+    title = input('Input title for plot\n')
+    plt.title(f'{title}', fontsize=12)
+    plt.xlabel('Generation', fontsize=12)
+    plt.ylabel('Fitness', fontsize=12)
+    plt.grid(True)
+    plt.legend(loc='upper right', bbox_to_anchor=(1, 1))
 
         # Save the combined plot to a PDF file for fitness
-        plt.savefig(f'{runs_path}/fitness_performance_metrics_with_error_bands.pdf', dpi=400, bbox_inches='tight')
-        plt.close(fig)
+
 
         # # Create a single plot for average frequency
         # fig_freq, ax_freq = plt.subplots()
@@ -154,8 +152,8 @@ def make_combined_plots_from_logbook(runs_path):
         # ax_freq.legend(loc='upper right', bbox_to_anchor=(1, 1))
 
     # Save the plot to a PDF file for frequency
-    sub_title = input('Input title for plot\n')
-    plt.savefig(f'{runs_path}/sub_title.pdf', dpi=400, bbox_inches='tight')
+    
+    plt.savefig(f'{runs_path}/{title}.pdf', dpi=400, bbox_inches='tight')
     print('All plots saved')
 
 def get_halloffame_data(path):
