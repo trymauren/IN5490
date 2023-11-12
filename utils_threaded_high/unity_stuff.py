@@ -5,7 +5,6 @@ from config import ea_config, interface_config
 # Unity ML agents modules
 from mlagents_envs.environment import UnityEnvironment
 from mlagents_envs.base_env import ActionTuple
-from mlagents_envs.environment import UnityEnvironment
 # from mlagents_envs.logging_util import set_log_level, DEBUG
 
 # set_log_level(DEBUG)
@@ -63,10 +62,12 @@ def evaluate_in_unity(actions) -> list:
     
     global env
 
-    env = get_env(no_graphics=ea_config['no_graphics'], path_to_unity_exec=functions.get_executable(executable_path))
+    env = get_env(no_graphics=interface_config['no_graphics'], path_to_unity_exec=functions.get_executable(executable_path))
 
     env.reset()
     behavior_names = list(env.behavior_specs.keys())
+    print("lolol")
+    print(len(behavior_names))
     num_agents = len(behavior_names)
     
     if len(actions) > num_agents:
@@ -119,6 +120,8 @@ class UnityInterface():
             UnityEnvironment: return the unity environment
         """
         env = UnityEnvironment(file_name=executable_file, no_graphics=True, worker_id=worker_id, log_folder='./../')
+        print("hahahah")
+        print(list(self.env.behavior_specs.keys()))
         env.reset()
         return env
 

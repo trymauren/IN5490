@@ -42,20 +42,25 @@ def make_plots_from_logbook(path, runs_path):
         all_avg_freq.append(avg_freq)
 
     # Convert lists to numpy arrays for computation
-    all_fitness = np.array(all_fitness)
-    all_max_fitness = np.array(all_max_fitness)
-    all_avg_freq = np.array(all_avg_freq)
+    a = [indfit for subfit in all_max_fitness for indfit in subfit]
+    print(np.shape(a))
+    all_max_fitness = handle_variable_lengths(all_max_fitness)
+    plt.plot(a)
+    plt.show()
+    quit()
+    all_max_fitness = handle_variable_lengths(all_max_fitness)
+    all_avg_freq = handle_variable_lengths(all_avg_freq)
 
     # Compute the average and standard deviation across all logbooks
-    avg_of_fitness = np.mean(all_fitness, axis=0)
-    std_dev_fitness = np.std(all_fitness, axis=0)
+    avg_of_fitness = np.nanmean(all_fitness, axis=0)
+    std_dev_fitness = np.nanstd(all_fitness, axis=0)
 
-    avg_of_max_fitness = np.mean(all_max_fitness, axis=0)
-    std_dev_max_fitness = np.std(all_max_fitness, axis=0)
+    avg_of_max_fitness = np.nanmean(all_max_fitness, axis=0)
+    std_dev_max_fitness = np.nanstd(all_max_fitness, axis=0)
 
     # Compute average and standard deviation only for frequency
-    avg_of_avg_freq = np.mean(all_avg_freq, axis=0)
-    std_dev_avg_freq = np.std(all_avg_freq, axis=0)
+    avg_of_avg_freq = np.nanmean(all_avg_freq, axis=0)
+    std_dev_avg_freq = np.nanstd(all_avg_freq, axis=0)
 
     # Create a single plot with two lines representing the averages for fitness
     fig_fitness, ax_fitness = plt.subplots()
@@ -97,6 +102,7 @@ def make_plots_from_logbook(path, runs_path):
     plt.close(fig_freq)
 
     print('All plots saved')
+    
 
 def get_halloffame_data(path):
     """Reads HOF data from file and visualizes the agent with highest fitness
@@ -157,11 +163,10 @@ def plot(runs_path):
 
 def train(runs):
     """
-    Train the simulation using CMA-ES (Covariance Matrix Adaptation Evolution Strategy).
+    Train the simulation using a basic EA, CMA-ES or bi-pop CMA-ES.
     
     Args:
-        runs_path (str): Path to the directory where simulation runs are stored.
-        executable_path (str): Path to the executable file.
+        runs (int): Number of times to run the evolution
         
     Returns:
         None
@@ -176,6 +181,7 @@ def train(runs):
     worker_ids = range(start_worker, start_worker + runs)
     seeds = range(start_seed, start_seed + runs)
     args = zip(worker_ids, seeds)
+    
 
     if ea_config['ea_type'] == 'basic':
         with multiprocessing.Pool(runs) as pool:
@@ -190,7 +196,7 @@ def train(runs):
         print(f' -- Exiting')
         exit()
     
-    if not logbooks or halloffames:
+    if not logbooks or not halloffames:
         logbooks, halloffames = map(list, zip(*rets))
 
     dump_data(logbooks, halloffames, runs_path)
@@ -305,6 +311,16 @@ def config_to_txt(path_to_file):
 
 
 ### --- Helpers --- ###
+def uniform_length_check(lst):
+    return all(len(item) == len(lst[0]) for item in lst)
+
+def handle_variable_lengths(lst):
+    if uniform_length_check(lst):
+        return np.array(lst)
+    else:
+        # Handling variable lengths, option 1: Use dtype='object'
+         return np.array(lst, dtype='object')
+
 def get_timestamp():
     """Gets time of when function is called
 
