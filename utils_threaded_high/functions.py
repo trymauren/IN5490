@@ -184,10 +184,10 @@ def make_combined_plots_from_logbook(runs_path):
 
         sub_label = input('Input label\n')
         # Plotting each average line with error bands for fitness
-        plt.plot(avg_of_fitness, label=f'Average Fitness {sub_label}')
-        plt.fill_between(range(len(avg_of_fitness)), avg_of_fitness - std_dev_fitness, avg_of_fitness + std_dev_fitness, alpha=0.2)
+        # plt.plot(avg_of_fitness, label=f'Average Fitness {sub_label}')
+        # plt.fill_between(range(len(avg_of_fitness)), avg_of_fitness - std_dev_fitness, avg_of_fitness + std_dev_fitness, alpha=0.2)
 
-        plt.plot(avg_of_max_fitness, label=f'Max Fitness {sub_label}')
+        plt.plot(avg_of_max_fitness, label=f'{sub_label}')
         plt.fill_between(range(len(avg_of_max_fitness)), avg_of_max_fitness - std_dev_max_fitness, avg_of_max_fitness + std_dev_max_fitness, alpha=0.2)
 
         # Styling the plot for fitness
@@ -195,8 +195,10 @@ def make_combined_plots_from_logbook(runs_path):
     plt.title(f'{title}', fontsize=12)
     plt.xlabel('Generation', fontsize=12)
     plt.ylabel('Fitness', fontsize=12)
+    ax = plt.gca()
+    ax.set_ylim(0,50)
     plt.grid(True)
-    plt.legend(loc='upper right', bbox_to_anchor=(1, 1))
+    plt.legend(loc='lower right', bbox_to_anchor=(1, 1))
 
         # Save the combined plot to a PDF file for fitness
 
@@ -257,7 +259,7 @@ def sim_best(runs_path, executable_path, n_agents):
     halloffame = get_halloffame_data(path_to_halloffame)
     exe_path = get_executable(executable_path, n_agents)
     unity_interface = unity_stuff.UnityInterface(executable_file=exe_path, worker_id=(interface_config['worker_id'] + 1))
-    fitness_evaluation.simulate_best(halloffame, 500, unity_interface)
+    fitness_evaluation.simulate_best(halloffame, unity_interface)
     
 def plot(runs_path):
     """
@@ -303,9 +305,11 @@ def train(runs):
         logbooks, halloffames = basic_deap.train()
 
     elif ea_config['ea_type'] == 'cma_es_bipop':
-        logbooks, halloffames = cma_es_deap.train_bipop(interface_config['worker_id'],ea_config['seed'])
+        # logbooks, halloffames = cma_es_deap.train_bipop(interface_config['worker_id'],ea_config['seed'])
+        with multiprocessing.Pool(runs) as pool:
+            rets = pool.starmap(cma_es_deap.train_bipop, args)
 
-    if ea_config['ea_type'] == 'basic_parallel':
+    elif ea_config['ea_type'] == 'basic_parallel':
         with multiprocessing.Pool(runs) as pool:
             rets = pool.starmap(basic_deap.train_parallel, args)
 

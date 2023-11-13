@@ -19,7 +19,6 @@ def evaluate_population(population, unity_interface) -> None:
 	"""
 	num_agents = unity_interface.get_agents()
 	fitnesses = [0]*len(population)
-	print(num_agents)
 	for i in range(0, len(population), num_agents):
 		subset = population[i:i+num_agents]
 		fitnesses[i:i+num_agents] = evaluate_group(subset, unity_interface)
@@ -56,9 +55,7 @@ def evaluate_group(group, unity_interface=None) -> tuple:
 		for entry in group[i]: # for entry in individual
 			if entry < 0:
 				penalty_accumulated += entry
-		fitnesses_as_tuple.append((fitness[i] + penalty_accumulated),)
-	print(fitness)
-	print(fitnesses_as_tuple)
+		fitnesses_as_tuple.append((fitness[i] + penalty_accumulated,))
 	return fitnesses_as_tuple
 #[[array([ 3.6873782, -0.7602028,  0.4305477], dtype=float32)], [array([ 3.8278027 , -0.57440406,  1.8399124], dtype=float32)], ]
 
@@ -94,7 +91,6 @@ def my_sin(A, phase, f):
     return A*np.sin(2*np.pi*f*t+phase)[:500]
 
 
-
 def simulate_best(group: np.array, unity_interface) -> None:
 	"""Simulate a singe individ with one crwaler 
 
@@ -121,13 +117,13 @@ def compute_best_movement(individual, num_move_directions=12):
 		limbs = list(np.array_split(individual[:-1],num_move_directions))
 		movement = [0]*len(limbs)
 		for i in range(len(limbs)):
-			sinusoid = compute_sin(*(limbs[i]), freq)
+			sinusoid = my_sin(*(limbs[i]), freq)
 			movement[i] = sinusoid
 		return np.asarray(movement)
 	else:
 		limbs = list(np.array_split(individual,num_move_directions))
 		movement = [0]*len(limbs)
 		for i in range(len(limbs)):
-			sinusoid = compute_sin(*(limbs[i]))
+			sinusoid = my_sin(*(limbs[i]))
 			movement[i] = sinusoid
 		return np.asarray(movement)
