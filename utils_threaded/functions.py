@@ -3,7 +3,7 @@ from sys import platform
 from datetime import datetime
 import numpy as np
 from config import interface_config, ea_config, sim_config
-from utils_threaded_high import fitness_evaluation, unity_stuff, cma_es_deap, basic_deap
+from utils_threaded import fitness_evaluation, unity_stuff, cma_es_deap, basic_deap
 
 import shelve
 import matplotlib.pyplot as plt

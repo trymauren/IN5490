@@ -3,7 +3,7 @@ from deap import base
 from deap import benchmarks
 from deap import creator
 from deap import tools
-from utils_threaded_high import fitness_evaluation, functions, unity_stuff
+from utils_threaded import fitness_evaluation, functions, unity_stuff
 from config import ea_config, interface_config
 import numpy as np
 import os

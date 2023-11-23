@@ -1,4 +1,4 @@
-from utils_threaded_high import functions
+from utils_threaded import functions
 from config import ea_config, sim_config, interface_config
 import os
 import sys

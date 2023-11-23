@@ -26,7 +26,7 @@
 #   Statistics:
 #   https://deap.readthedocs.io/en/master/tutorials/basic/part3.html
 
-from utils_threaded_high import functions, fitness_evaluation, unity_stuff
+from utils_threaded import functions, fitness_evaluation, unity_stuff
 from collections import deque
 
 import pickle

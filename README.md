@@ -1,5 +1,7 @@
 # IN5490 project - Evolutionary Robotics, Reality Gap. 
 
+This is the code for our IN5490 research project. The group consists of Jonas, Øystein and Trym.
+
 The initial goal of this project was to try different physics simulators and other noise to create more robust robots,
 reducing the reality gap. However, due to time constraints, this was not possible, and the focus changed to comparing different
 evolutionary algorithms, fitness functions and frequency configurations.
