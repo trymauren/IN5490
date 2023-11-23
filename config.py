@@ -1,18 +1,20 @@
 ea_config = {
-# 'ea_type'						: 'cma_es_bipop',
+'ea_type'						: 'basic',
+# 'ea_type'						: 'basic_parallel',
 # 'ea_type'						: 'cma_es_parallel',
-'pop_size'						: 900, 		# not appliccable for bipop
+# 'ea_type'						: 'cma_es_bipop',
+'pop_size'						: 30, 		# not appliccable for bipop
 'num_generations'				: 100, 		# not appliccable for bipop
-'std_dev'						: 3, 		# only appliccable for cma
+'std_dev'						: 1, 		# only appliccable for cma
 'genome_len'					: 36,
 'num_mov_repeat'				: 50, 		# 50 is fine
 'fitness_one_axis'				: False,
-'lower_start_limit'				: -1,
-'upper_start_limit'				: 1,
+'lower_start_limit'				: 1,
+'upper_start_limit'				: 4,
 'num_restarts'					: 10,		# not appliccable for bipop
 'seed'							: 128,		# should really not be necessary to adjust
 'equal_frequency_all_limbs'		: False,
-'n_cores'						: 8,		# 
+'n_cores'						: 10,		# 
 }
 
 interface_config = {

@@ -1,23 +1,23 @@
-Timestamp: 2023_11_15_19_32_24
+Timestamp: 2023_11_13_04_05_43
 [Timestamp]
 [ea_config]
 ea_type: basic_parallel
 pop_size: 900
 num_generations: 100
 std_dev: 1
-genome_len: 25
+genome_len: 36
 num_mov_repeat: 50
-fitness_one_axis: True
-lower_start_limit: 1
+fitness_one_axis: False
+lower_start_limit: 0
 upper_start_limit: 4
 num_restarts: 10
 seed: 128
-equal_frequency_all_limbs: True
-n_cores: 10
+equal_frequency_all_limbs: False
+n_cores: 8
 
 [interface_config]
 no_graphics: True
-worker_id: 50
+worker_id: 1
 seed: 13
 
 [sim_config]

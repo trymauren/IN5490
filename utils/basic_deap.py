@@ -63,10 +63,10 @@ def train(unity_interface, runs_path, verbose=True):
     
     for r in range(ea_config['num_restarts']):
         pop = toolbox.population(n=ea_config['pop_size'])
-        np.random.seed(ea_config['seed']+r)
-        print(' -- Seed: ', ea_config['seed']+r)
+        seed = ea_config['seed']+r
+        np.random.seed(seed)
         logbooks.append(tools.Logbook())
-        logbooks[-1].header = 'gen', 'run', 'pop_size', 'fitness', 'amplitude', 'frequency', 'phase_shift'
+        logbooks[-1].header = 'gen', 'run', 'pop_size', 'seed', 'fitness', 'amplitude', 'frequency', 'phase_shift'
         logbooks[-1].chapters['fitness'].header = 'std', 'min', 'avg', 'max'
         logbooks[-1].chapters['amplitude'].header = 'std', 'min', 'avg', 'max'
         logbooks[-1].chapters['frequency'].header = 'std', 'min', 'avg', 'max'
@@ -102,7 +102,7 @@ def train(unity_interface, runs_path, verbose=True):
             # The population is entirely replaced by the offspring
             pop[:] = offspring
             record = stats.compile(pop)
-            logbooks[-1].record(gen=g, run=r, pop_size=len(pop), **record)
+            logbooks[-1].record(gen=g, run=r, pop_size=len(pop), seed=seed, **record)
             if verbose:
                 print(logbooks[-1].stream)
             halloffame.update(pop)

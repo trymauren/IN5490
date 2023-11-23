@@ -311,26 +311,26 @@ def get_executable(executable_path, pop_size=ea_config['pop_size']):
     """
     if platform == "linux" or platform == "linux2":
         ret = executable_path + 'exe_linux_60/linux_60.x86_64'
+        print(' -- Using environment with 60 agents')
     elif platform == "darwin":
         if pop_size == 1:
             ret = executable_path + 'exe_mac_1.app'
-            print('-- Environment with 1 agent')
+            print(' -- Using environment with 1 agent')
         elif pop_size <= 30:
             ret = executable_path + 'exe_mac_30.app' 
-            print('-- Environment with 30 agents')
+            print(' -- Using environment with 30 agents')
         elif pop_size > 30:
             ret = executable_path + 'exe_mac_60.app' 
-            print('-- Environment with 60 agents')
+            print(' -- Using environment with 60 agents')
     elif platform == "win32":
         if pop_size == 1:
             ret = executable_path + 'exe_pc_1/UnityEnvironment.exe'
-            print('-- Environment with 1 agent') 
+            print(' -- Using environment with 1 agent')
         elif pop_size <= 30:
             ret = executable_path + 'exe_pc_30/UnityEnvironment.exe'
-            print('-- Environment with 30 agents')
+            print(' -- Using environment with 30 agents')
         if pop_size > 30:
             ret = executable_path + 'exe_pc_60/UnityEnvironment.exe'
-            print('-- Environment with 60 agents') 
+            print(' -- Using environment with 60 agents')
         
     return ret
-
